@@ -86,7 +86,7 @@ nodemon app.js
 yarn start
 ```
 
-The server will be available at `http://localhost:3000`
+The server will be available at `https://moodigo-1jm5.onrender.com`
 
 ## 📁 Project Structure
 ```

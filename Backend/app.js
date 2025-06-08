@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 dotenv.config(); 
 const app = express();
-const port = 3000;
+// const port = 3000;
 const cors = require('cors');
 const methodoverride = require("method-override");
 const Product = require('./model/product');
