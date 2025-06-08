@@ -24,7 +24,7 @@ const ProductDetails = ({ setCartCount }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/products/${id}`, {
+        const response = await axios.get(`https://moodigo-1jm5.onrender.com/products/${id}`, {
           withCredentials: true,
         });
         setProduct(response.data);
@@ -74,7 +74,7 @@ const ProductDetails = ({ setCartCount }) => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3000/products/${id}/delete`, {
+      await axios.delete(`https://moodigo-1jm5.onrender.com/products/${id}/delete`, {
         withCredentials: true,
       });
 

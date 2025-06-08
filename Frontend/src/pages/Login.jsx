@@ -13,7 +13,7 @@ const SignInPage = () => {
      // This should be inside the function
     
     try {
-        const response = await axios.post('http://localhost:3000/login', {
+        const response = await axios.post('https://moodigo-1jm5.onrender.com/login', {
             email: email,
             password: password,
         }, { withCredentials: true });

@@ -10,7 +10,7 @@ const ProfileSection = () => {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/check-auth', {
+      const response = await axios.get('https://moodigo-1jm5.onrender.com/check-auth', {
         withCredentials: true,
       });
 
