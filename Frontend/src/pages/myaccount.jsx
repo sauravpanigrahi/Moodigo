@@ -83,9 +83,9 @@ const MyAccount = () => {
         };
 
         checkAuthStatus();
-        // Check auth status every 30 seconds instead of 5
-        const intervalId = setInterval(checkAuthStatus, 30000);
-        return () => clearInterval(intervalId);
+        // Removed interval for auth check
+        // const intervalId = setInterval(checkAuthStatus, 30000);
+        // return () => clearInterval(intervalId);
     }, []);
 
     // Listen for storage events (for when user logs in/out in another tab)

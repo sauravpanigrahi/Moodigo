@@ -1,158 +1,133 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import './Productdetails.css';
-import { toast } from 'react-toastify';
+import './Product.css'; // Import your CSS file for styling
+import categories from "./category";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+const Product = () => {
+  const [products, setProducts] = useState([]);
+  const [error, setError] = useState(null); // State for error handling
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const { category, subcategory } = useParams();
 
-const ProductDetails = ({ setCartCount }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const [product, setProduct] = useState(null);
-  const [isOwner, setIsOwner] = useState(false);
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
-
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  // useEffect(() => {
-  //   // Clear cart from localStorage
-  //   localStorage.removeItem("cart");
-  //   setCartCount(0);
-  //   setIsAddedToCart(false);
-  // }, []); // Run once when component mounts
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`https://moodigo-1jm5.onrender.com/products/${id}`, {
-          withCredentials: true,
-        });
-        setProduct(response.data);
-
-        const cart = JSON.parse(localStorage.getItem("cart")) || {};
-        setIsAddedToCart(!!cart[id]);
-
-        if (user && response.data.owner && user._id === response.data.owner._id) {
-          setIsOwner(true);
-        }
-      } catch (err) {
-        console.error("Error fetching product details", err);
-        toast.error("Failed to fetch product details");
-      }
-    };
-
-    fetchData();
-  }, [id, user]);
-
-  const handleCartClick = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || {};
-
-    if (!isAddedToCart) {
-      cart[id] = true;
-      localStorage.setItem("cart", JSON.stringify(cart));
-      setIsAddedToCart(true);
-      setCartCount(Object.keys(cart).length);
-      toast.success("Product added to cart!");
-    } else {
-      delete cart[id];
-      localStorage.setItem("cart", JSON.stringify(cart));
-      setIsAddedToCart(false);
-      setCartCount(Object.keys(cart).length);
-      toast.error("Product removed from cart!");
-    }
-
-    // Notify other components
-    window.dispatchEvent(new CustomEvent('cartUpdated', {
-      detail: { cart },
-      bubbles: true,
-      composed: true
-    }));
-  };
-
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this product?");
-    if (!confirmed) return;
-
+  const fetchProducts = async () => {
     try {
-      await axios.delete(`https://moodigo-1jm5.onrender.com/products/${id}/delete`, {
+      const response = await axios.get('https://moodigo-1jm5.onrender.com/products', {
         withCredentials: true,
       });
-
-      // Remove from cart
-      const cart = JSON.parse(localStorage.getItem("cart")) || {};
-      delete cart[id];
-      localStorage.setItem("cart", JSON.stringify(cart));
-      setCartCount(Object.keys(cart).length);
-
-      toast.success("Product deleted successfully!");
-      navigate("/products");
+      setProducts(response.data);
     } catch (err) {
-      console.error("Error deleting the product", err);
-      toast.error(err.response?.data?.error || "Failed to delete product");
+      console.error('Error fetching data', err);
+      setError('Failed to load products. Please try again later.');
     }
   };
 
-  if (!product) return <p>Loading product details...</p>;
+  useEffect(() => {
+    fetchProducts();
+    const handleProductAdded = () => {
+      fetchProducts();
+    };
+
+    window.addEventListener('productAdded', handleProductAdded);
+    return () => {
+    window.removeEventListener('productAdded', handleProductAdded);
+    };
+  }, []);
+
+  // Filter products when category/subcategory changes
+  useEffect(() => {
+    if (category && subcategory) {
+      const filtered = products.filter(product => {
+        const [productCategory, productSubcategory] = product.category.split(' > ');
+        return productCategory === category && productSubcategory === subcategory;
+      });
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products);
+    }
+  }, [products, category, subcategory]);
+
+const handleheartClick = (e) => {
+  const icon = e.currentTarget.firstChild;
+  icon.style.color = icon.style.color === 'red' ? 'white' : 'red';
+};
 
   return (
-    <div className="details">
-      <div className="image">
-        {/* <img src={product.image} alt={product.name || 'Product Image'} className="card-img-top" /> */}
-        <img src={
+    <div className="home">
+      {error ? (
+        <p className="error-message">{error}</p>
+      ) : (
+        <>
+          <div className="label-container mt-2">
+            <div className="category-menu">
+              {Object.entries(categories).map(([category, subcategories]) => (
+                <div key={category} className="menu-item">
+                  <span className="category-title">{category}</span>
+                  <div className="dropdown-content">
+                    {Object.entries(subcategories).map(([name, link]) => (
+                      <Link 
+                        key={name} 
+                        to={`/products/${category}/${name}`}
+                        className="dropdown-item"
+                      >
+                        {name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="product">
+            {filteredProducts.length > 0 ? (
+             filteredProducts.map((product) => (
+                <div key={product._id} className="card">
+                  <Link to={`/products/${product._id}`} className="product-link">
+                    {/* // Update the image rendering part */}
+                      <img 
+                        src={
                           product.image && 
                           (typeof product.image === 'string' ? 
                             product.image : 
                             product.image.url)
                         } 
-                        className="card-img-top" 
+                        className="image1" 
                         alt={product.name} 
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = '/path/to/placeholder.jpg';
                         }}
                       />
-      </div>
-      <div className="card-body">
-        <h4 className="card-title " style={{marginLeft:40,fontSize: 30 }}>{product.name}</h4>
-        <p className="card-title p">{product.about}</p>
-        <p className="card-title p" style={{ fontSize: 30 }}>Price: ₹{product.price}</p>
-
-        <div className="card-title p" style={{ lineHeight: 2 }}>
-          <h5>Available offers</h5>
-          <ul>
-            <li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit Card</li>
-            <li>Special Price: Get extra 18% off</li>
-            <li>Combo Offer: Buy 2 items save ₹40; Buy 3+ save ₹80</li>
-            <li>EMI starting from ₹369/month</li>
-          </ul>
-        </div>
-
-        <p className="card-title p">Category: {product.category}</p>
-        <p className="card-title p">Subcategory: {product.subcategory}</p>
-    <p className="card-title p">Seller: {product.owner?.email?.match(/^[^\d]+/)?.[0] || 'Unknown'}</p>
-
-        {isOwner && (
-          <>
-            <Link to={`/products/${id}/edit`}>
-              <button className="btn btn-primary mt-3 ms-4 me-2">Edit</button>
-            </Link>
-            <button className="btn btn-danger mt-3" onClick={handleDelete}>Delete</button>
-          </>
-        )}
-
-        <button
-          className="btn mt-3 ms-2"
-          onClick={handleCartClick}
-          style={{
-            backgroundColor: isAddedToCart ? 'green' : '#007bff',
-            color: 'white'
-          }}
-        >
-          {isAddedToCart ? 'Added to cart ✅' : 'Add to cart'}
-        </button>
-      </div>
+                         </Link>
+                        <button className="heart-button" >
+                            
+  
+                            <FavoriteIcon onClick={handleheartClick} style={{fontSize:35}} />
+                            </button>
+                  <div className="card-body">
+                    {/* <p className="card-title">{product.category}</p>
+                    <p className="card-title ">{product.subcategory}</p> */}
+                    <h5 className="card-title">
+                      {product.name.length > 60 ? `${product.name.slice(0, 60)}...` : product.name}
+                    </h5>
+                    <p className="card-text">
+                      {product.about.length > 60 ? `${product.about.slice(0, 60)}...` : product.about}
+                    </p>
+                    <div className="d-flex flex-column">
+                      <p className="card-text fw-bold mb-0">₹{product.price}</p>
+                      <p className="card-text fw-bold text-success mb-0">Bank Offer</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No products available.</p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
-export default ProductDetails;
+export default Product;
