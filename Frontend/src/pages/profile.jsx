@@ -1,73 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Profile.css';
 import Avatar from '@mui/material/Avatar';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useAuth } from '../context/AuthContext';
 
 const ProfileSection = () => {
-  const [currUser, setCurrUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, loading } = useAuth();
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get('https://moodigo-1jm5.onrender.com/check-auth', {
-        withCredentials: true,
-      });
-
-      if (response.data.isAuthenticated) {
-        setCurrUser(response.data.user);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      } else {
-        setCurrUser(null);
-        localStorage.removeItem('user');
-      }
-    } catch (error) {
-      console.error('Authentication check failed:', error);
-      setCurrUser(null);
-      localStorage.removeItem('user');
-      toast.error('Authentication failed. Please log in again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    checkAuthStatus();
-
-    // Also check when tab becomes active (optional but helpful)
-    const onFocus = () => checkAuthStatus();
-    window.addEventListener('focus', onFocus);
-
-    return () => {
-      window.removeEventListener('focus', onFocus);
-    };
-  }, []);
-
-  useEffect(() => {
-    // Sync across tabs
-    const handleStorageChange = (e) => {
-      if (e.key === 'user') {
-        if (e.newValue) {
-          try {
-            setCurrUser(JSON.parse(e.newValue));
-          } catch (err) {
-            console.error('Invalid user data in localStorage');
-          }
-        } else {
-          setCurrUser(null);
-        }
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
-
-  if (isLoading) {
+  if (loading) {
     return <div className="loading">Loading profile...</div>;
   }
 
-  if (!currUser) {
+  if (!user) {
     return <div className="not-authenticated">Please log in to view your profile.</div>;
   }
 
@@ -75,12 +18,12 @@ const ProfileSection = () => {
     <div className="user-profile-box">
       <div className="avatar-box">
         <Avatar sx={{ bgcolor: '#1976d2', width: 80, height: 80 }}>
-          {currUser.Firstname?.[0]?.toUpperCase() || 'U'}
+          {user.Firstname?.[0]?.toUpperCase() || 'U'}
         </Avatar>
         <h2>
-          {currUser.Firstname && currUser.Lastname
-            ? `${currUser.Firstname} ${currUser.Lastname}`
-            : currUser.email.split('@')[0]}
+          {user.Firstname && user.Lastname
+            ? `${user.Firstname} ${user.Lastname}`
+            : user.email.split('@')[0]}
         </h2>
         <p className="user-role">Registered User</p>
       </div>
@@ -88,16 +31,16 @@ const ProfileSection = () => {
       <div className="user-info">
         <div className="info-row">
           <span className="label">Email:</span>
-          <span className="value">{currUser.email}</span>
+          <span className="value">{user.email}</span>
         </div>
         <div className="info-row">
           <span className="label">Phone Number:</span>
-          <span className="value">{currUser.phonenumber}</span>
+          <span className="value">{user.phonenumber}</span>
         </div>
         <div className="info-row">
           <span className="label">Account Created:</span>
           <span className="value">
-            {new Date(currUser.createdAt).toLocaleDateString()}
+            {new Date(user.createdAt).toLocaleDateString()}
           </span>
         </div>
       </div>

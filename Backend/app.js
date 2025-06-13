@@ -5,7 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
 const cors = require("cors");
 const methodoverride = require("method-override");
 const Product = require("./model/product");
@@ -39,23 +39,40 @@ const store= MongoStore.create({
   },
   touchAfter: 24 * 60 * 60, // 1 day
 });
+
+// Add session store logging
 store.on("error", function(e){
   console.error("Session store error", e);
 });
-// Session configuration
+
+store.on("connect", function() {
+  console.log("Session store connected");
+});
+
+store.on("disconnect", function() {
+  console.log("Session store disconnected");
+});
+
 let sessionOptions = {
   store,
   secret: process.env.SESSION_SECRET || 'your-secret-key',
-  resave: false,
+  resave: true,
   saveUninitialized: true,
+  proxy: true,
+  name: 'moodigo.sid',
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7
+    secure: true, // Always use secure cookies
+    sameSite: 'none', // Allow cross-site cookies
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
   }
 };
+
+// Add session middleware logging
+app.use((req, res, next) => {
+  console.log(`Session ID: ${req.sessionID}`);
+  next();
+});
 
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
@@ -74,20 +91,33 @@ const upload = multer({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
-app.use(
-  cors({
-    origin: [
-      // "http://localhost:5173",
-      "https://moodigo-web-app.web.app",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+
+// CORS configuration
+
+
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors({
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://moodigo-web-app.web.app'
+    ];
+    if (!origin && process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie', 'Cookie']
+}));
 
 passport.use(new localStrategy({ usernameField: "email" }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -213,14 +243,27 @@ app.post("/signup", async (req, res) => {
 app.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      return res.status(401).json({ 
+        error: info.message || "Invalid credentials" 
+      });
+    }
     req.logIn(user, (err) => {
       if (err) return next(err);
-      res.status(200).json({ message: "Login successful", user: { username: user.username, email: user.email, _id: user._id } });
+      // Explicitly save session before sending response
+      req.session.save(() => {
+        res.status(200).json({ 
+          message: "Login successful", 
+          user: { 
+            username: user.username, 
+            email: user.email, 
+            _id: user._id 
+          } 
+        });
+      });
     });
   })(req, res, next);
 });
-
 app.get("/logout", (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ error: "Logout failed" });
@@ -258,11 +301,19 @@ app.delete("/Address/delete/:id", async (req, res) => {
 });
 
 app.get("/check-auth", (req, res) => {
+  console.log("Checking auth status:", {
+    isAuthenticated: req.isAuthenticated(),
+    sessionID: req.sessionID,
+    user: req.user ? req.user._id : null
+  });
+  
   if (req.isAuthenticated()) {
-    const { _id, Firstname, Lastname, phonenumber, email } = req.user;
-    res.status(200).json({ isAuthenticated: true, user: { _id, Firstname, Lastname, phonenumber, email } });
+    const { _id, Firstname, Lastname, phonenumber, email, username } = req.user;
+    res.status(200).json({ 
+      isAuthenticated: true, 
+      user: { _id, Firstname, Lastname, phonenumber, email, username } 
+    });
   } else {
-    if (req.cookies) Object.keys(req.cookies).forEach((cookie) => res.clearCookie(cookie));
     res.status(200).json({ isAuthenticated: false });
   }
 });
@@ -271,6 +322,6 @@ app.get("/", (req, res) => {
   res.send("Hello from the backend");
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen( () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
