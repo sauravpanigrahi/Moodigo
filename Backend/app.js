@@ -24,9 +24,10 @@ const Contact = require('./model/contact');
 const nodemailer = require('nodemailer');
 const Review = require('./model/review');
 // Connect to MongoDB
+const dburl=process.env.DB_URL || "mongodb://localhost:27017/Ecommerce";
 async function main() {
   try {
-    await mongoose.connect("mongodb://localhost:27017/Ecommerce");
+    await mongoose.connect(dburl);
     console.log('Connected to MongoDB');
   } catch (err) {
     console.error('Error connecting to MongoDB', err);
@@ -37,24 +38,23 @@ main();
 
 
 
-// const store= MongoStore.create({
-//   mongoUrl: dburl,
-//   crypto:{
-//     secret: process.env.SESSION_SECRET
-//   },
-//   touchAfter: 24 * 60 * 60, // 1 day
-// });
-// store.on("error", function(e){
-//   console.error("Session store error", e);
-// });
+const store= MongoStore.create({
+  mongoUrl: dburl,
+  crypto:{
+    secret: process.env.SESSION_SECRET
+  },
+  touchAfter: 24 * 60 * 60, // 1 day
+});
+store.on("error", function(e){
+  console.error("Session store error", e);
+});
 // Session configuration
 let sessionOptions = {
-  // store,
+  store,
   name: 'session',
   secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
-
   name: 'moodigo.sid',
   cookie: {
     httpOnly: true,
@@ -109,8 +109,8 @@ app.use(passport.session());
 app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
-      'http://localhost:5173',
-      'https://moodigo-web-app.web.app'
+      // 'http://localhost:5173',
+      "https://moodigo-web-app.web.app"
     ];
     if (!origin && process.env.NODE_ENV === 'development') {
       return callback(null, true);
