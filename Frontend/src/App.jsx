@@ -1,3 +1,8 @@
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Navbar from './components/navbar'
 import { Routes, Route } from 'react-router-dom'
 import Product from './pages/Product'
@@ -7,16 +12,14 @@ import SignInPage from './pages/Login'
 import SignUpPage from './pages/SignUp'
 import Home from './pages/Home'
 import './App.css'
-import { useState, useEffect } from "react";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import CSS
+
 import Listing from './pages/NewProduct'
 import Logout from './pages/Logout'
 import CartDetails from './pages/CartDetails'
 import Address from './pages/Address'
 import MyAccount from './pages/myaccount'
-// import LearnMorePage from './pages/learnmore';
 import ProfileSection from './pages/profile'
+
 function App() {
   const [cartCount, setCartCount] = useState(0);
 
@@ -60,6 +63,8 @@ function App() {
 
     </Routes>
     </>
+
+ 
   )
 }
 

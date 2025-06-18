@@ -31,7 +31,8 @@ const CartDetails = () => {
             const response = await Promise.all(
                 productIds.map(async (id) => {
                     try {
-                        const res = await axios.get(`http://localhost:3000/products/${id}`, {
+                        console.log(`Fetching product ${id}...`);
+                        const res = await axios.get(`https://moodigo-1jm5.onrender.com/products/${id}`, {
                             withCredentials: true,
                         });
                         console.log(`Successfully fetched product ${id}:`, res.data);
@@ -54,13 +55,14 @@ const CartDetails = () => {
                 status: err.response?.status
             });
             toast.error("Failed to load cart items");
+            setCartItems([]); // Set empty array on error
         }
     };
 
     // Function to fetch address
     // const fetchAddress = async () => {
     //     try {
-    //         const response = await axios.get('http://localhost:3000/Address', {
+    //         const response = await axios.get('https://moodigo-1jm5.onrender.com/Address', {
     //             withCredentials: true
     //         });
     //         if (response.data && response.data.length > 0) {
@@ -74,7 +76,7 @@ const CartDetails = () => {
     // };
     const fetchAddress = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/Address', {
+        const response = await axios.get('https://moodigo-1jm5.onrender.com/Address', {
             withCredentials: true
         });
         
@@ -104,10 +106,18 @@ const CartDetails = () => {
 
         // Initial load
         const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
-        console.log('Stored cart from localStorage:', storedCart);
+        console.log('Initial stored cart from localStorage:', storedCart);
         const productIds = Object.keys(storedCart);
         console.log('Initial product IDs from localStorage:', productIds);
-        fetchCartItems(productIds);
+        
+        if (productIds.length === 0) {
+            console.log('No items in cart');
+            setCartItems([]);
+        } else {
+            console.log('Fetching items for product IDs:', productIds);
+            fetchCartItems(productIds);
+        }
+        
         fetchAddress();
 
         // Add event listener
@@ -180,7 +190,7 @@ const CartDetails = () => {
                 return;
             }
 
-            await axios.delete(`http://localhost:3000/Address/delete/${addressId}`, {
+            await axios.delete(`https://moodigo-1jm5.onrender.com/Address/delete/${addressId}`, {
                 withCredentials: true
             });
             
@@ -236,7 +246,21 @@ const CartDetails = () => {
                     {cartItems.map((item) => (
                         <div key={item._id} className={`cart-item ${deletingItems.has(item._id) ? 'deleting' : ''}`}>
                             <div className="item-image">
-                                <img src={item.image} alt={item.name} />
+                                 <img
+                                    src={
+                                        item.image && 
+                                        (typeof item.image === 'string'
+                                        ? item.image
+                                        : item.image.url)
+                                    }
+                                    className="image1"
+                                    alt={item.name}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = '/path/to/placeholder.jpg'; // Replace with your real fallback image path
+                                    }}
+                                    />
+
                             </div>
                             <div className="item-details">
                                 <h3>{item.name}</h3>

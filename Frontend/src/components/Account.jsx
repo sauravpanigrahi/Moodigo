@@ -29,8 +29,9 @@ export default function AccountMenu() {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/check-auth', {
+                const response = await axios.get('https://moodigo-1jm5.onrender.com/check-auth', {
                     withCredentials: true,
+                    timeout: 5000 // Add timeout to prevent hanging requests
                 });
 
                 if (response.data.isAuthenticated) {
@@ -42,17 +43,28 @@ export default function AccountMenu() {
                 }
             } catch (error) {
                 console.error('Authentication check failed:', error);
-                setCurrUser(null);
-                localStorage.removeItem('user');
-                toast.error('Authentication check failed. Please try logging in again.');
+                // Only clear user data if we get a 401 response
+                if (error.response && error.response.status === 401) {
+                    setCurrUser(null);
+                    localStorage.removeItem('user');
+                }
+                // Don't show error toast for network errors to prevent spam
+                if (!error.response || error.response.status !== 401) {
+                    console.log('Non-critical auth check error:', error.message);
+                }
             } finally {
                 setIsLoading(false);
             }
         };
 
         checkAuthStatus();
+<<<<<<< HEAD
         // Check auth status every 5 seconds instead of 30
         const intervalId = setInterval(checkAuthStatus, 5000);
+=======
+        // Check auth status every 30 seconds
+        const intervalId = setInterval(checkAuthStatus, 30000);
+>>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
         return () => clearInterval(intervalId);
     }, []);
 

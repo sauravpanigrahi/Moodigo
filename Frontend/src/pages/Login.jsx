@@ -1,45 +1,26 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // Import toast function
+import { useAuth } from '../context/AuthContext';
 
 const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const { login, user } = useAuth();
 
-  const navigate = useNavigate(); 
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-     // This should be inside the function
-    
-    try {
-        const response = await axios.post('http://localhost:3000/login', {
-            email: email,
-            password: password,
-        }, { withCredentials: true });
-
-        // Store user data in localStorage
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        
-        // Dispatch login success event with user data
-        window.dispatchEvent(new CustomEvent('loginSuccess', {
-            detail: { user: response.data.user }
-        }));
-        
-        toast.success(response.data.message || 'Login successful!');
-        navigate("/");
-    } catch (err) {
-        console.error('Login failed', err);
-        if (err.response && err.response.data && err.response.data.error) {
-            toast.error(err.response.data.error || 'Login failed. Try again.');
-        } else {
-            toast.error('Login failed. Try again.');
-        }
+    const success = await login(email, password);
+    if (success) {
+      navigate('/');
     }
-};
-
-
-  
+  };
 
   return (
     <div
@@ -82,7 +63,6 @@ const SignInPage = () => {
         <button type="submit" className="btn btn-primary btn-block mt-3">
           Log In
         </button>
-        
       </form>
       <div className="mt-3 text-center">
         <a href="/forgot-password" className="text-decoration-none">Forgot password?</a>
