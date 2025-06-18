@@ -17,7 +17,7 @@ const Address=()=>{
     const handleSubmit = async (e) => {
       e.preventDefault();
       try{
-        const response=await axios.post("https://moodigo-1jm5.onrender.com/Address", address, {
+        const response=await axios.post("http://localhost:3000/Address", address, {
           withCredentials: true
         });
         setAddress(response.data);

@@ -5,12 +5,11 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-<<<<<<< HEAD
+
 const cors = require('cors');
-=======
+
 // const port = process.env.PORT || 3000;
-const cors = require("cors");
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
 const methodoverride = require("method-override");
 const Product = require("./model/product");
 const session = require("express-session");
@@ -18,7 +17,6 @@ const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const localStrategy = require("passport-local").Strategy;
 const User = require("./model/user");
-<<<<<<< HEAD
 const Address = require('./model/Address');
 const multer = require('multer');
 const { storage } = require('./cloudConfig');
@@ -26,15 +24,6 @@ const Contact = require('./model/contact');
 const nodemailer = require('nodemailer');
 const Review = require('./model/review');
 // Connect to MongoDB
-// const dburl=process.env.MONGO_URL;  
-=======
-const Address = require("./model/Address");
-const multer = require("multer");
-const { storage } = require("./cloudConfig");
-
-//  Connect to MongoDB
-const dburl=process.env.MONGO_URL;  
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
 async function main() {
   try {
     await mongoose.connect("mongodb://localhost:27017/Ecommerce");
@@ -47,7 +36,7 @@ async function main() {
 main();
 
 
-<<<<<<< HEAD
+
 // const store= MongoStore.create({
 //   mongoUrl: dburl,
 //   crypto:{
@@ -64,46 +53,15 @@ let sessionOptions = {
   name: 'session',
   secret: 'your-secret-key',
   resave: false,
-=======
-const store= MongoStore.create({
-  mongoUrl: dburl,
-  crypto:{
-    secret: process.env.SESSION_SECRET
-  },
-  touchAfter: 24 * 60 * 60, // 1 day
-});
-
-// Add session store logging
-store.on("error", function(e){
-  console.error("Session store error", e);
-});
-
-store.on("connect", function() {
-  console.log("Session store connected");
-});
-
-store.on("disconnect", function() {
-  console.log("Session store disconnected");
-});
-
-let sessionOptions = {
-  store,
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
-  resave: true,
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
   saveUninitialized: true,
-  proxy: true,
+
   name: 'moodigo.sid',
   cookie: {
     httpOnly: true,
-<<<<<<< HEAD
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7
-=======
-    secure: true, // Always use secure cookies
-    sameSite: 'none', // Allow cross-site cookies
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
+
   }
 };
 
@@ -113,7 +71,7 @@ app.use((req, res, next) => {
   next();
 });
 
-<<<<<<< HEAD
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -123,8 +81,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Multer configuration
-=======
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -239,7 +196,6 @@ app.delete("/products/:id/delete", async (req, res) => {
 
 app.post("/addproduct", upload.single("imageFile"), async (req, res) => {
   try {
-<<<<<<< HEAD
     console.log('--- New Product Request ---');
     console.log('Request Body:', req.body);
     if (req.file) {
@@ -248,9 +204,7 @@ app.post("/addproduct", upload.single("imageFile"), async (req, res) => {
     if (!req.user) {
       return res.status(401).json({ error: 'You must be logged in to add a product' });
     }
-=======
-    if (!req.user) return res.status(401).json({ error: "Login required" });
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
 
     const { name, about, price, category, subcategory, image } = req.body;
     if (!name || !about || !price || !category || !subcategory) {
@@ -348,7 +302,6 @@ app.get("/Address", async (req, res) => {
   res.status(200).json(addresses);
 });
 
-<<<<<<< HEAD
 app.get("/",(req,res)=>{
     res.send("Hello from the backend");
 })
@@ -378,8 +331,7 @@ app.get('/check-auth', (req, res) => {
 });
 
 // Address deletion endpoint
-=======
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
 app.delete("/Address/delete/:id", async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Login required" });

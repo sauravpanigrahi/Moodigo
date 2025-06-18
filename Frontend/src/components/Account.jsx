@@ -29,7 +29,7 @@ export default function AccountMenu() {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('https://moodigo-1jm5.onrender.com/check-auth', {
+                const response = await axios.get('http://localhost:3000/check-auth', {
                     withCredentials: true,
                     timeout: 5000 // Add timeout to prevent hanging requests
                 });
@@ -58,13 +58,10 @@ export default function AccountMenu() {
         };
 
         checkAuthStatus();
-<<<<<<< HEAD
+
         // Check auth status every 5 seconds instead of 30
         const intervalId = setInterval(checkAuthStatus, 5000);
-=======
-        // Check auth status every 30 seconds
-        const intervalId = setInterval(checkAuthStatus, 30000);
->>>>>>> c97203f9a74bac6606e0bc4036858ab434acea57
+
         return () => clearInterval(intervalId);
     }, []);
 

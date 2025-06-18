@@ -21,7 +21,7 @@ const Edit = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('https://moodigo-1jm5.onrender.com/check-auth', {
+        const response = await axios.get('http://localhost:3000/check-auth', {
           withCredentials: true
         });
         
@@ -32,7 +32,7 @@ const Edit = () => {
         }
         
         // Verify if the user is the owner of the product
-        const productResponse = await axios.get(`https://moodigo-1jm5.onrender.com/products/${id}/edit`, {
+        const productResponse = await axios.get(`http://localhost:3000/products/${id}/edit`, {
           withCredentials: true
         });
         
@@ -76,7 +76,7 @@ const Edit = () => {
         category: `${product.category} > ${product.subcategory}`
       };
 
-      await axios.put(`https://moodigo-1jm5.onrender.com/products/${id}`, productData, {
+      await axios.put(`http://localhost:3000/products/${id}`, productData, {
         withCredentials: true
       });
       

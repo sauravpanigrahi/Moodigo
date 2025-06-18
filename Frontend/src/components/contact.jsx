@@ -59,7 +59,7 @@ const contact = () => {
                     <h1 className="text-center mb-4">Contact Us</h1>
                     <div className="row g-4">
                         <div className="col-12 col-md-5">
-                            <img src='./public/contact.jpg' alt="contact" className="img-fluid rounded shadow-sm" style={{ height: '100%', objectFit: 'cover' }}/>
+                            <img src='/contact.jpg' alt="contact" className="img-fluid rounded shadow-sm" style={{ height: '100%', objectFit: 'cover' }}/>
                         </div>
                         
                         <div className="col-12 col-md-7">

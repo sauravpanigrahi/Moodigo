@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
@@ -11,6 +11,8 @@ import Edit from './pages/Edit'
 import SignInPage from './pages/Login'
 import SignUpPage from './pages/SignUp'
 import Home from './pages/Home'
+import Settings from './pages/Settings'
+import LearnMore from './pages/LearnMore'
 import './App.css'
 
 import Listing from './pages/NewProduct'
@@ -39,32 +41,27 @@ function App() {
   };
 
   return (
-    <>
-    <ToastContainer />
+    <AuthProvider>
+      <ToastContainer />
       <Navbar cartCount={cartCount}/>
       <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/products" element={<Product  />} />
-      <Route path="/products/:category/:subcategory" element={<Product />} />
-      <Route path="/products/:id" element={<ProductDetails setCartCount={updateCartCount} />} />
-      <Route path="/products/:id/edit" element={<Edit />} />
-      <Route path="/login" element={<SignInPage />} />
-      <Route path="/Signup" element={<SignUpPage />} />
-      <Route path="/addproduct" element={<Listing /> } />
-      <Route path="/logout" element={<Logout />} />
-      <Route path="/cartdetails" element={<CartDetails setCartCount={updateCartCount} />} />
-      <Route path="/Address" element={<Address />} />
-      <Route path="/myaccount" element={<MyAccount />} />
-      <Route path="/profile" element={<ProfileSection />} />
-      
-
-      {/* <Route path="/learnmore" element={<LearnMorePage />} /> */}
-
-
-    </Routes>
-    </>
-
- 
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Product  />} />
+        <Route path="/products/:category/:subcategory" element={<Product />} />
+        <Route path="/products/:id" element={<ProductDetails setCartCount={updateCartCount} />} />
+        <Route path="/products/:id/edit" element={<Edit />} />
+        <Route path="/login" element={<SignInPage />} />
+        <Route path="/Signup" element={<SignUpPage />} />
+        <Route path="/addproduct" element={<Listing /> } />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/cartdetails" element={<CartDetails setCartCount={updateCartCount} />} />
+        <Route path="/Address" element={<Address />} />
+        <Route path="/myaccount" element={<MyAccount />} />
+        <Route path="/profile" element={<ProfileSection />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/learnmore" element={<LearnMore />} />
+      </Routes>
+    </AuthProvider>
   )
 }
 

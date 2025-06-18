@@ -64,7 +64,7 @@ const Listing = () => {
     }
 
     // Update the handleSubmit function to properly handle the response
-const response = await axios.post('https://moodigo-1jm5.onrender.com/addproduct', formData, {
+const response = await axios.post('http://localhost:3000/addproduct', formData, {
   headers: {
     'Content-Type': 'multipart/form-data',
   },
