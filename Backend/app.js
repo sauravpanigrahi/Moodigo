@@ -41,27 +41,35 @@ main();
 const store= MongoStore.create({
   mongoUrl: dburl,
   crypto:{
-    secret: process.env.SESSION_SECRET
+    secret: process.env.SESSION_SECRET || 'your-secret-key'
   },
   touchAfter: 24 * 60 * 60, // 1 day
+  collectionName: 'sessions', // Explicitly set collection name
+  ttl: 24 * 60 * 60, // 1 day in seconds
 });
+
 store.on("error", function(e){
   console.error("Session store error", e);
 });
+
+store.on("connect", function() {
+  console.log("MongoDB session store connected");
+});
+
 // Session configuration
 let sessionOptions = {
   store,
-  name: 'session',
-  secret: 'your-secret-key',
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   name: 'moodigo.sid',
   cookie: {
     httpOnly: true,
+    secure: true, // Must be true for cross-origin requests
+    sameSite: 'none', // Required for cross-origin requests
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7
-
-
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined // Set domain for production
   }
 };
 
@@ -100,32 +108,58 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
 
-// CORS configuration
+// CORS configuration - must come before session middleware
+const allowedOrigins = [
+  'https://moodigo-web-app.web.app',
+  'http://localhost:5173',
+  'https://localhost:5173', // Add HTTPS localhost for testing
+];
 
-
-app.use(session(sessionOptions));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(cors({
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      // 'http://localhost:5173',
-      "https://moodigo-web-app.web.app"
-    ];
-    if (!origin && process.env.NODE_ENV === 'development') {
+  origin: function (origin, callback) {
+    console.log('CORS check for origin:', origin);
+    
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) {
+      console.log('Allowing request with no origin');
       return callback(null, true);
     }
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+    
+    if (allowedOrigins.includes(origin)) {
+      console.log('Origin allowed:', origin);
       callback(null, true);
     } else {
+      console.log('Origin blocked:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
-  exposedHeaders: ['Set-Cookie', 'Cookie']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Set-Cookie'],
+  preflightContinue: false,
+  optionsSuccessStatus: 200
 }));
+
+app.use(session(sessionOptions));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Add session debugging middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] Session Debug:`, {
+    sessionID: req.sessionID,
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user ? req.user._id : null,
+    cookies: req.headers.cookie ? 'present' : 'missing',
+    origin: req.headers.origin,
+    method: req.method
+  });
+  next();
+});
 
 passport.use(new localStrategy({ usernameField: "email" }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -268,7 +302,12 @@ app.post("/login", (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) return next(err);
       // Explicitly save session before sending response
-      req.session.save(() => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return res.status(500).json({ error: "Session save failed" });
+        }
+        console.log('Login successful, session saved:', req.sessionID);
         res.status(200).json({ 
           message: "Login successful", 
           user: { 
@@ -312,21 +351,20 @@ app.listen(PORT, () => {
 });
 
 app.get('/check-auth', (req, res) => {
+  console.log("Checking auth status:", {
+    isAuthenticated: req.isAuthenticated(),
+    sessionID: req.sessionID,
+    user: req.user ? req.user._id : null
+  });
+  
   if (req.isAuthenticated()) {
-    // Return user details without sensitive information
-    const { _id, Firstname,Lastname,phonenumber, email } = req.user;
-    return res.status(200).json({ 
+    const { _id, Firstname, Lastname, phonenumber, email, username } = req.user;
+    res.status(200).json({ 
       isAuthenticated: true, 
-      user: { _id, Firstname,Lastname,phonenumber,  email } 
+      user: { _id, Firstname, Lastname, phonenumber, email, username } 
     });
   } else {
-    // Clear any client-side cookies if not authenticated server-side
-    if (req.cookies) {
-      Object.keys(req.cookies).forEach(cookie => {
-        res.clearCookie(cookie);
-      });
-    }
-    return res.status(200).json({ isAuthenticated: false });
+    res.status(200).json({ isAuthenticated: false });
   }
 });
 
@@ -463,10 +501,49 @@ app.get("/check-auth", (req, res) => {
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello from the backend");
+app.get("/test-session", (req, res) => {
+  console.log('Test session route called');
+  console.log('Session ID:', req.sessionID);
+  console.log('Session data:', req.session);
+  console.log('Is authenticated:', req.isAuthenticated());
+  console.log('User:', req.user);
+  console.log('Headers:', req.headers);
+  
+  res.json({
+    sessionID: req.sessionID,
+    isAuthenticated: req.isAuthenticated(),
+    user: req.user,
+    sessionData: req.session,
+    headers: {
+      origin: req.headers.origin,
+      cookie: req.headers.cookie ? 'present' : 'missing',
+      'user-agent': req.headers['user-agent']
+    }
+  });
 });
 
-app.listen( () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.get("/test-cors", (req, res) => {
+  res.json({
+    message: "CORS test successful",
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  
+  if (err.message === 'Not allowed by CORS') {
+    return res.status(403).json({ 
+      error: 'CORS error', 
+      message: 'Origin not allowed',
+      origin: req.headers.origin 
+    });
+  }
+  
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message 
+  });
 });
