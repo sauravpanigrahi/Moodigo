@@ -483,24 +483,6 @@ app.post('/review/:id', async (req, res) => {
   }
 });
 
-app.get("/check-auth", (req, res) => {
-  console.log("Checking auth status:", {
-    isAuthenticated: req.isAuthenticated(),
-    sessionID: req.sessionID,
-    user: req.user ? req.user._id : null
-  });
-  
-  if (req.isAuthenticated()) {
-    const { _id, Firstname, Lastname, phonenumber, email, username } = req.user;
-    res.status(200).json({ 
-      isAuthenticated: true, 
-      user: { _id, Firstname, Lastname, phonenumber, email, username } 
-    });
-  } else {
-    res.status(200).json({ isAuthenticated: false });
-  }
-});
-
 app.get("/test-session", (req, res) => {
   console.log('Test session route called');
   console.log('Session ID:', req.sessionID);
