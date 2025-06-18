@@ -28,7 +28,7 @@ const MyAccount = () => {
                 toast.error('No address to delete');
                 return;
                 }
-             await axios.delete(`http://localhost:3000/Address/delete/${addressId}`, {
+             await axios.delete(`https://moodigo-96i1.onrender.com/Address/delete/${addressId}`, {
                 withCredentials: true,
             });
            
@@ -46,7 +46,7 @@ const MyAccount = () => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/check-auth', {
+                const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
                     withCredentials: true,
                 });
 
@@ -59,7 +59,7 @@ const MyAccount = () => {
                 }
 
                 // Fetch addresses
-                const storeaddress = await axios.get('http://localhost:3000/Address', {
+                const storeaddress = await axios.get('https://moodigo-96i1.onrender.com/Address', {
                     withCredentials: true,
                 });
                 

@@ -32,7 +32,7 @@ const CartDetails = () => {
                 productIds.map(async (id) => {
                     try {
                         console.log(`Fetching product ${id}...`);
-                        const res = await axios.get(`http://localhost:3000/products/${id}`, {
+                        const res = await axios.get(`https://moodigo-96i1.onrender.com/products/${id}`, {
                             withCredentials: true,
                         });
                         console.log(`Successfully fetched product ${id}:`, res.data);
@@ -62,7 +62,7 @@ const CartDetails = () => {
     // Function to fetch address
     // const fetchAddress = async () => {
     //     try {
-    //         const response = await axios.get('http://localhost:3000/Address', {
+    //         const response = await axios.get('https://moodigo-96i1.onrender.com/Address', {
     //             withCredentials: true
     //         });
     //         if (response.data && response.data.length > 0) {
@@ -76,7 +76,7 @@ const CartDetails = () => {
     // };
     const fetchAddress = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/Address', {
+        const response = await axios.get('https://moodigo-96i1.onrender.com/Address', {
             withCredentials: true
         });
         
@@ -190,7 +190,7 @@ const CartDetails = () => {
                 return;
             }
 
-            await axios.delete(`http://localhost:3000/Address/delete/${addressId}`, {
+            await axios.delete(`https://moodigo-96i1.onrender.com/Address/delete/${addressId}`, {
                 withCredentials: true
             });
             

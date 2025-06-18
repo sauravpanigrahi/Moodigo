@@ -16,7 +16,7 @@ const SignUpPage = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
    try{
-    const  response=await axios.post('http://localhost:3000/signup',
+    const  response=await axios.post('https://moodigo-96i1.onrender.com/signup',
        {Firstname,Lastname, email,phonenumber, password},{
 
       withCredentials: true, // Include credentials for CORS requests

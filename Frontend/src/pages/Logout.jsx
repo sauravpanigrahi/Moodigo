@@ -9,7 +9,7 @@ const Logout = () => {
     useEffect(() => {
         const handleLogOut = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/logout', { 
+                const response = await axios.get('https://moodigo-96i1.onrender.com/logout', { 
                     withCredentials: true 
                 });
                 

@@ -29,7 +29,7 @@ export default function Review() {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/check-auth', {
+      const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
         withCredentials: true
       });
       setIsAuthenticated(response.data.isAuthenticated);
@@ -42,7 +42,7 @@ export default function Review() {
   const fetchReviews = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3000/review/${productId}`);
+      const response = await axios.get(`https://moodigo-96i1.onrender.com/review/${productId}`);
       setReviews(response.data);
     } catch (error) {
       if (error.response?.status === 404) {
@@ -79,7 +79,7 @@ export default function Review() {
       const reviewData = {
         ...review,
       };
-      await axios.post(`http://localhost:3000/review/${productId}`, reviewData, {
+      await axios.post(`https://moodigo-96i1.onrender.com/review/${productId}`, reviewData, {
         withCredentials: true
       });
       toast.success('Review submitted successfully');

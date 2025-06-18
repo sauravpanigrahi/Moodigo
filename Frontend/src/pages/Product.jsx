@@ -17,7 +17,7 @@ const Product = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/products', {
+      const response = await axios.get('https://moodigo-96i1.onrender.com/products', {
         withCredentials: true,
       });
       setProducts(response.data);

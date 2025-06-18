@@ -30,7 +30,7 @@ export default function AccountMenu() {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/check-auth', {
+                const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
                     withCredentials: true,
                     timeout: 5000 // Add timeout to prevent hanging requests
                 });

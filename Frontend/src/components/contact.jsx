@@ -32,7 +32,7 @@ const contact = () => {
                     ...formData,
                 };
 
-                await axios.post('http://localhost:3000/contact', contactData, {
+                await axios.post('https://moodigo-96i1.onrender.com/contact', contactData, {
                     withCredentials: true
                 });
                 
