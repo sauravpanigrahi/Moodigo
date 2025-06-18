@@ -13,7 +13,7 @@ import SignInPage from './pages/Login'
 import SignUpPage from './pages/SignUp'
 import Home from './pages/Home'
 import Settings from './pages/Settings'
-import LearnMore from './pages/LearnMore'
+
 import './App.css'
 
 import Listing from './pages/NewProduct'
@@ -23,7 +23,7 @@ import Address from './pages/Address'
 import MyAccount from './pages/myaccount'
 import ProfileSection from './pages/profile'
 import Contact from './components/contact'
-
+import AboutUs from './pages/about'
 function App() {
   const [cartCount, setCartCount] = useState(0);
 
@@ -62,8 +62,9 @@ function App() {
           <Route path="/myaccount" element={<MyAccount />} />
           <Route path="/profile" element={<ProfileSection />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/learnmore" element={<LearnMore />} />
+        
           <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<AboutUs />} />
         </Routes>
       </AuthProvider>
     </DarkModeProvider>

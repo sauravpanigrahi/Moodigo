@@ -41,7 +41,7 @@ const Footer = () => {
           <div className="col-6 col-lg-2">
             <h6 className="fw-bold mb-3 text-center text-lg-start">Company</h6>
             <ul className="list-unstyled text-center text-lg-start">
-              <li className="mb-2"><a href="#" className={`${darkMode ? 'text-light' : 'text-muted'} text-decoration-none`}>About Us</a></li>
+              <li className="mb-2"><a href="/about" className={`${darkMode ? 'text-light' : 'text-muted'} text-decoration-none`}>About Us</a></li>
               <li className="mb-2"><a href="#" className={`${darkMode ? 'text-light' : 'text-muted'} text-decoration-none`}>Careers</a></li>
               <li className="mb-2"><a href="" className={`${darkMode ? 'text-light' : 'text-muted'} text-decoration-none`}>Press</a></li>
               <li className="mb-2"><a href="/contact" className={`${darkMode ? 'text-light' : 'text-muted'} text-decoration-none`}>Contact</a></li>

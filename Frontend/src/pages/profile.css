@@ -12,6 +12,24 @@
 .user-profile-box:hover {
   transform: translateY(-4px);
 }
+.dark-mode .user-profile-box,
+.dark-mode .user-role{
+  background-color: #1a1a1a;
+  color: white;
+ 
+ 
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05),
+  0 0 20px rgba(255, 107, 107, 0.3);
+
+}
+.dark-mode .avatar-box h2{
+  color: white;
+}
+.dark-mode .user-role,
+.dark-mode .info-row span{
+  color: white;
+}
+
 
 .avatar-box {
   display: flex;

@@ -8,26 +8,6 @@ import {
   ShoppingBag, 
   Shirt, 
   Crown, 
-  Truck, 
-  Shield, 
-  Users,
-  Smartphone,
-  Star,
-  ChevronRight,
-  CheckCircle,
-  PlayCircle,
-  ArrowRight,
-  Zap,
-  Moon,
-  Sun,
-  Heart,
-  Search,
-  Filter,
-  Sparkles,
-  Award,
-  RefreshCw,
-  CreditCard,
-  Gift
 } from 'lucide-react';
 const DisplayContent = () => {
   const { darkMode } = useDarkMode();

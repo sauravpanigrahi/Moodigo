@@ -2,6 +2,7 @@ import React from 'react';
 import './Profile.css';
 import Avatar from '@mui/material/Avatar';
 import { useAuth } from '../context/AuthContext';
+import { useDarkMode } from '../context/DarkModeContext';
 
 const ProfileSection = () => {
   const { user, loading } = useAuth();
@@ -25,7 +26,7 @@ const ProfileSection = () => {
             ? `${user.Firstname} ${user.Lastname}`
             : user.email.split('@')[0]}
         </h2>
-        <p className="user-role">Registered User</p>
+        <p className="user-role" >Registered User</p>
       </div>
 
       <div className="user-info">
