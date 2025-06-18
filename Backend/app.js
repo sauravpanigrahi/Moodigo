@@ -7,7 +7,6 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 dotenv.config(); 
 const app = express();
-const port = 3000;
 const cors = require('cors');
 const methodoverride = require("method-override");
 const Product = require('./model/product');
@@ -19,46 +18,55 @@ const User = require("./model/user");
 const Address = require('./model/Address');
 const multer = require('multer');
 const { storage } = require('./cloudConfig');
-
+const Contact = require('./model/contact');
+const nodemailer = require('nodemailer');
+const Review = require('./model/review');
 // Connect to MongoDB
-const dburl=process.env.MONGO_URL;  
+// const dburl=process.env.MONGO_URL;  
 async function main() {
-  await mongoose.connect(process.env.MONGO_URL );
-}
-main()
-  .then(() => {
+  try {
+    await mongoose.connect("mongodb://localhost:27017/Ecommerce");
     console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error('Error connecting to MongoDB', err);
-  });
+    process.exit(1);
+  }
+}
+main();
 
 
-const store= MongoStore.create({
-  mongoUrl: dburl,
-  crypto:{
-    secret: process.env.SESSION_SECRET
-  },
-  touchAfter: 24 * 60 * 60, // 1 day
-});
-store.on("error", function(e){
-  console.error("Session store error", e);
-});
+// const store= MongoStore.create({
+//   mongoUrl: dburl,
+//   crypto:{
+//     secret: process.env.SESSION_SECRET
+//   },
+//   touchAfter: 24 * 60 * 60, // 1 day
+// });
+// store.on("error", function(e){
+//   console.error("Session store error", e);
+// });
 // Session configuration
 let sessionOptions = {
-  store,
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  // store,
+  name: 'session',
+  secret: 'your-secret-key',
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7
   }
 };
 
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD
+  },
+});
 
 // Multer configuration
 const fileFilter = (req, file, cb) => {
@@ -185,6 +193,11 @@ app.delete('/products/:id/delete', async (req, res) => {
 
 app.post('/addproduct', upload.single('imageFile'), async (req, res) => {
   try {
+    console.log('--- New Product Request ---');
+    console.log('Request Body:', req.body);
+    if (req.file) {
+      console.log('Request File:', req.file);
+    }
     if (!req.user) {
       return res.status(401).json({ error: 'You must be logged in to add a product' });
     }
@@ -224,6 +237,7 @@ app.post('/addproduct', upload.single('imageFile'), async (req, res) => {
       image: imageData,
       owner: req.user._id
     });
+    console.log('Attempting to save new product:', newProduct);
 
     // In your /addproduct route
    // Modify the response to flatten the image structure
@@ -347,9 +361,12 @@ app.get("/Address", async (req, res) => {
 app.get("/",(req,res)=>{
     res.send("Hello from the backend");
 })
-app.listen(port,()=>{
-    console.log(`Server is running on port ${process.env.PORT}`);
-})
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
 app.get('/check-auth', (req, res) => {
   if (req.isAuthenticated()) {
     // Return user details without sensitive information
@@ -393,6 +410,104 @@ app.delete("/Address/delete/:id", async (req, res) => {
   } catch (err) {
     console.error('Error deleting address:', err);
     res.status(500).json({ error: 'Failed to delete address' });
+  }
+});
+app.post('/contact', async (req, res) => {
+  try {
+    const { name, description, phone,email } = req.body;
+
+    // Save contact to DB
+    const newContact = new Contact({ name, description, phone,email });
+    await newContact.save();
+
+    // Email setup
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: process.env.RECEIVER,
+      subject: "New Contact Form Submission",
+      text: `Name: ${name}\nDescription: ${description}\nPhone: ${phone}\nEmail: ${email}`
+    };
+
+    try {
+      console.log("Attempting to send email...");
+      await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully");
+      return res.status(200).json({ message: 'Contact submitted and email sent successfully' });
+    } catch (emailError) {
+      console.error("Email sending error:", emailError);
+      return res.status(500).json({ error: 'Contact saved, but failed to send email' });
+    }
+
+  } catch (err) {
+    console.error('Error submitting contact:', err);
+    return res.status(500).json({ error: 'Failed to submit contact' });
+  }
+});
+  // app.post('/review/:id',async(req,res)=>{
+  //   try{
+  //     const product=await Product.findById(req.params.id);
+  //     const{rating,comment}=req.body;
+  //     const newReview=new Review({rating,comment,author:req.user._id});
+  //     product.reviews.push(newReview);
+  //     await product.save();
+  //     await newReview.save();
+  //     res.status(200).json({message:'Review submitted successfully'});
+  //   }catch(err){
+  //     console.error('Error submitting review:', err);
+  //     res.status(500).json({error:'Failed to submit review'});
+  //   }
+  // });
+
+// Add GET route for fetching reviews
+app.get('/review/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const reviews = await Review.find({ product: product._id })
+      .populate('author', 'Firstname Lastname')
+      .sort({ createdAt: -1 });
+    
+    res.status(200).json(reviews);
+  } catch (err) {
+    console.error('Error fetching reviews:', err);
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+});
+
+app.post('/review/:id', async (req, res) => {
+  try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'You must be logged in to submit a review' });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    const { rating, comment } = req.body;
+    if (!rating || !comment) {
+      return res.status(400).json({ error: 'Rating and comment are required' });
+    }
+
+    const newReview = new Review({
+      rating,
+      comment,
+      author: req.user._id,
+      product: product._id
+    });
+
+    await newReview.save();
+    product.reviews.push(newReview._id);
+    await product.save();
+    
+    res.status(200).json({ message: 'Review submitted successfully' });
+  } catch (err) {
+    console.error('Error submitting review:', err);
+    res.status(500).json({ error: 'Failed to submit review' });
   }
 });
 

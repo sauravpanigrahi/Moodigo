@@ -64,7 +64,7 @@ const FeaturedProduct = () => {
     return (
         <div>
             <div className="featured d-flex flex-column justify-content-center align-items-center mt-5 p-4">
-                <h2>Featured Products</h2>
+                <h2 className='display-5 fw-bold'>Featured Products</h2>
 
                 {/* Grid container for responsive layout */}
                 <Grid container spacing={4} justifyContent="center">

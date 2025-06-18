@@ -16,6 +16,7 @@ const Navbar = ({cartCount}) => {
 
   }
   
+  
     return (
         <nav className="navbar navbar-expand-lg  bg-body-tertiary border-bottom sticky-top ">
   <div className="container-fluid">
@@ -33,23 +34,7 @@ const Navbar = ({cartCount}) => {
       <span className="navbar-toggler-icon"></span>
     </button>
     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div className="navbar-nav ms-auto">
-      <TextField
-  id="outlined-basic"
-  label="Search"
-  variant="outlined"
-  size="small"
-  sx={{ width: 500}}
-  InputProps={{
-    endAdornment: (
-      <InputAdornment position="end">
-        <SearchIcon />
-      </InputAdornment>
-    ),
-  }}
-/>
-
-      </div>
+     
     </div>
     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div className="navbar-nav ms-auto gap-2 " >

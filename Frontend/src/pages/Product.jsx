@@ -4,11 +4,14 @@ import axios from 'axios';
 import './Product.css'; // Import your CSS file for styling
 import categories from "./category";
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Footer from '../components/footer';
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null); // State for error handling
   const [filteredProducts, setFilteredProducts] = useState([]);
   const { category, subcategory } = useParams();
+
+ 
 
   const fetchProducts = async () => {
     try {
@@ -21,6 +24,7 @@ const Product = () => {
       setError('Failed to load products. Please try again later.');
     }
   };
+
 
   useEffect(() => {
     fetchProducts();
@@ -46,6 +50,7 @@ const Product = () => {
       setFilteredProducts(products);
     }
   }, [products, category, subcategory]);
+
 
 const handleheartClick = (e) => {
   const icon = e.currentTarget.firstChild;
@@ -126,7 +131,11 @@ const handleheartClick = (e) => {
           </div>
         </>
       )}
+      <div className="footer">
+        <Footer/>
+      </div>
     </div>
+    
   );
 };
 

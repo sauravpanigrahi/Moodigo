@@ -2,7 +2,8 @@ import React from 'react';
 import DisplayContent from '../components/display';
 import FeaturedProduct from '../components/Featured';
 import Policy from '../components/Policy';
-
+import Contact from '../components/contact';
+import Footer from '../components/footer';
 const Home = () => {
     return ( 
         <>
@@ -11,6 +12,8 @@ const Home = () => {
              <DisplayContent/> 
              <FeaturedProduct/> 
              <Policy/> 
+             <Contact/>
+             <Footer/>
             
             </div>
         </div>

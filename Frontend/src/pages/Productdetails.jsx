@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from 'axios';
 import './Productdetails.css';
 import { toast } from 'react-toastify';
-
+import Review from "../components/review";
+import Footer from "../components/footer";
 const ProductDetails = ({ setCartCount }) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -95,61 +96,72 @@ const ProductDetails = ({ setCartCount }) => {
   if (!product) return <p>Loading product details...</p>;
 
   return (
-    <div className="details">
-      <div className="image">
-        {/* <img src={product.image} alt={product.name || 'Product Image'} className="card-img-top" /> */}
-        <img src={
-                          product.image && 
-                          (typeof product.image === 'string' ? 
-                            product.image : 
-                            product.image.url)
-                        } 
-                        className="card-img-top" 
-                        alt={product.name} 
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = '/path/to/placeholder.jpg';
-                        }}
-                      />
-      </div>
-      <div className="card-body">
-        <h4 className="card-title " style={{marginLeft:40,fontSize: 30 }}>{product.name}</h4>
-        <p className="card-title p">{product.about}</p>
-        <p className="card-title p" style={{ fontSize: 30 }}>Price: ₹{product.price}</p>
-
-        <div className="card-title p" style={{ lineHeight: 2 }}>
-          <h5>Available offers</h5>
-          <ul>
-            <li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit Card</li>
-            <li>Special Price: Get extra 18% off</li>
-            <li>Combo Offer: Buy 2 items save ₹40; Buy 3+ save ₹80</li>
-            <li>EMI starting from ₹369/month</li>
-          </ul>
+    <div>
+    <div className="product-details-container">
+      <div className="details">
+        <div className="image">
+          {/* <img src={product.image} alt={product.name || 'Product Image'} className="card-img-top" /> */}
+          <img src={
+                            product.image && 
+                            (typeof product.image === 'string' ? 
+                              product.image : 
+                              product.image.url)
+                          } 
+                          className="card-img-top " 
+                          alt={product.name} 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/path/to/placeholder.jpg';
+                          }}
+                        />
         </div>
+        <div className="card-body ">
+          <h4 className="card-title " style={{marginLeft:30,fontSize: 30 }}>{product.name}</h4>
+          <p className="card-title p">{product.about}</p>
+          <p className="card-title p" style={{ fontSize: 30 }}>Price: ₹{product.price}</p>
 
-        <p className="card-title p">Category: {product.category}</p>
-        <p className="card-title p">Subcategory: {product.subcategory}</p>
-    <p className="card-title p">Seller: {product.owner?.email?.match(/^[^\d]+/)?.[0] || 'Unknown'}</p>
+          <div className="card-title p" style={{ lineHeight: 2 }}>
+            <h5>Available offers</h5>
+            <ul>
+              <li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit Card</li>
+              <li>Special Price: Get extra 18% off</li>
+              <li>Combo Offer: Buy 2 items save ₹40; Buy 3+ save ₹80</li>
+              <li>EMI starting from ₹369/month</li>
+            </ul>
+          </div>
 
-        {isOwner && (
-          <>
-            <Link to={`/products/${id}/edit`}>
-              <button className="btn btn-primary mt-3 ms-4 me-2">Edit</button>
-            </Link>
-            <button className="btn btn-danger mt-3" onClick={handleDelete}>Delete</button>
-          </>
-        )}
+          <p className="card-title p">Category: {product.category}</p>
+          <p className="card-title p">Subcategory: {product.subcategory}</p>
+          <p className="card-title p">Seller: {product.owner?.email?.match(/^[^\d]+/)?.[0] || 'Unknown'}</p>
 
-        <button
-          className="btn mt-3 ms-2"
-          onClick={handleCartClick}
-          style={{
-            backgroundColor: isAddedToCart ? 'green' : '#007bff',
-            color: 'white'
-          }}
-        >
-          {isAddedToCart ? 'Added to cart ✅' : 'Add to cart'}
-        </button>
+          {isOwner && (
+            <>
+              <Link to={`/products/${id}/edit`}>
+                <button className="btn btn-primary mt-3 ms-4 me-2">Edit</button>
+              </Link>
+              <button className="btn btn-danger mt-3" onClick={handleDelete}>Delete</button>
+            </>
+          )}
+
+          <button
+            className="btn mt-3 ms-5"
+            onClick={handleCartClick}
+            style={{
+              backgroundColor: isAddedToCart ? 'green' : '#007bff',
+              color: 'white'
+            }}
+          >
+            {isAddedToCart ? 'Added to cart ✅' : 'Add to cart'}
+          </button>
+        </div>
+      </div>
+      <div className="review">
+        <Review />
+      </div>
+     
+    </div>
+    <div className="footer">
+        <Footer/>
       </div>
     </div>
   );

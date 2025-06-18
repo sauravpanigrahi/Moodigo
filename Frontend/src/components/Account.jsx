@@ -51,7 +51,7 @@ export default function AccountMenu() {
         };
 
         checkAuthStatus();
-        // Check auth status every 30 seconds instead of 5
+        // Check auth status every 5 seconds instead of 30
         const intervalId = setInterval(checkAuthStatus, 5000);
         return () => clearInterval(intervalId);
     }, []);
