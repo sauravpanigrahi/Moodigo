@@ -106,18 +106,16 @@ app.use(methodoverride("_method"));
 app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
-const allowedOrigins = [
-  'https://moodigo-web-app.web.app',
-  'http://localhost:5173',
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      // 'http://localhost:5173',
+      "https://moodigo-web-app.web.app"
+    ];
     if (!origin && process.env.NODE_ENV === 'development') {
-      // Allow requests with no origin (like curl, Postman) in dev
       return callback(null, true);
     }
-    if (allowedOrigins.includes(origin)) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -125,8 +123,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Set-Cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie', 'Cookie']
 }));
 
 
@@ -473,4 +471,3 @@ app.get("/", (req, res) => {
 app.listen( () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
-
