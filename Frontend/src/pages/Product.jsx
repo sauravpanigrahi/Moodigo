@@ -5,11 +5,13 @@ import './Product.css'; // Import your CSS file for styling
 import categories from "./category";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import Footer from '../components/footer';
+import { useDarkMode } from '../context/DarkModeContext';
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null); // State for error handling
   const [filteredProducts, setFilteredProducts] = useState([]);
   const { category, subcategory } = useParams();
+  const { darkMode } = useDarkMode();
 
  
 
@@ -63,17 +65,30 @@ const handleheartClick = (e) => {
         <p className="error-message">{error}</p>
       ) : (
         <>
-          <div className="label-container mt-2">
-            <div className="category-menu">
+          <div className="label-container mt-2" style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
+            <div className="category-menu " style={{color: darkMode ? 'white' : 'black'}}>
               {Object.entries(categories).map(([category, subcategories]) => (
                 <div key={category} className="menu-item">
-                  <span className="category-title">{category}</span>
-                  <div className="dropdown-content">
+                  <span className="category-title" style={{color: darkMode ? 'white' : 'black',backgroundColor: darkMode ? 'transparent' : 'f0f0f0',}}>{category}</span>
+                  <div className="dropdown-content" style={{
+                    backgroundColor: darkMode ? '#2d2d2d' : 'white',
+                    border: darkMode ? '1px solid #444' : '1px solid #ddd'
+                  }}>
                     {Object.entries(subcategories).map(([name, link]) => (
                       <Link 
                         key={name} 
                         to={`/products/${category}/${name}`}
                         className="dropdown-item"
+                        style={{
+                          color: darkMode ? '#e0e0e0' : 'black',
+                          backgroundColor: darkMode ? '#2d2d2d' : 'white'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.backgroundColor = darkMode ? '#404040' : '#f8f9fa';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.backgroundColor = darkMode ? '#2d2d2d' : 'white';
+                        }}
                       >
                         {name}
                       </Link>

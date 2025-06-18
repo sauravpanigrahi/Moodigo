@@ -13,13 +13,14 @@ import Avatar from '@mui/material/Avatar';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import Logout from "./Logout";
+import { useDarkMode } from '../context/DarkModeContext';
 const MyAccount = () => {
     const [currUser, setCurrUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selecedsection, setselectedSection] = useState('profile');
     const [address, setaddress] = useState([]);
     const navigate = useNavigate();
-
+    const { darkMode } = useDarkMode();
     // Add this function to handle address deletion
     const handleAddressdelete = async (addressId) => {
         try {
@@ -137,7 +138,7 @@ const MyAccount = () => {
     }
 
     return (
-        <div className="profile-container">
+        <div className={`profile-container ${darkMode ? 'dark-mode' : ''}`}>
             <div className="profile">
                 <div className="account-info">
                     <div className="avatar">
@@ -172,7 +173,7 @@ const MyAccount = () => {
                         <>
               <div className="profile-detail ms-5 mt-4">
                 <h4>Personal Information</h4>
-                    <div className= " mt-4 " style={{display:'flex',gap:'5rem',marginBottom:'20px',width:"100%"}}>
+                    <div className= " mt-4 " style={{display:'flex',gap:'5rem',marginBottom:'20px',width:"100%",color: darkMode ? 'white' : 'black'}}>
                   <TextField id="outlined-basic" label="First Name" variant="outlined" value={currUser.Firstname} style={{width:"32%"}}  disabled />
                     <TextField id="outlined-basic" label="Last Name "  value={currUser.Lastname}variant="outlined"  disabled />
                           </div>
@@ -194,7 +195,7 @@ const MyAccount = () => {
                                 <h4>Manage Addresses</h4>
                                 <div className="address-card mb-3 mt-4"style={{border:'1px solid black'}} onClick={handleAddress}>
                                     <div className="address-content">
-                                    <h3> Add new Address</h3>
+                                    <h3 style={{color: darkMode ? 'white' : 'black'}}> Add new Address</h3>
                                         <AddCircleOutlineIcon className="add-icon" />
                                     </div>
                                     </div>

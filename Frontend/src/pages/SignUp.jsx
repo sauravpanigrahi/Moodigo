@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Import toast function
-
+import { useDarkMode } from '../context/DarkModeContext';
 const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,7 +11,7 @@ const SignUpPage = () => {
   const [Firstname, setFirstname] = useState('');
   const [Lastname, setLastname] = useState('');
   const [phonenumber, setphonenumber] = useState('');
-
+  const { darkMode } = useDarkMode();
   const navigate = useNavigate();
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -40,9 +40,12 @@ const SignUpPage = () => {
         padding: '20px', /* Space inside the element */
         borderRadius: '8px', /* Rounded corners */
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', /* Border shadow */
+        backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
+        // color: darkMode ? 'white' : 'black',
+       
       }}
     >
-      <h2 className="text-center">Sign In</h2>
+      <h2 className="text-center">Sign Up</h2>
       <form onSubmit={handleSubmit}>
       <div className="form-group">
           <label htmlFor="Firstname">Firstname</label>
@@ -51,6 +54,7 @@ const SignUpPage = () => {
             id="Firstname"
             className="form-control mt-2"
             placeholder="Enter Firstname"
+            
             value={Firstname}
             onChange={(e) => setFirstname(e.target.value)}
             required
@@ -111,6 +115,7 @@ const SignUpPage = () => {
       </form>
      
     </div>
+    
   );
 };
 

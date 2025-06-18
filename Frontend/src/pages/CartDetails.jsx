@@ -8,7 +8,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PaymentIcon from '@mui/icons-material/Payment';
 import './CartDetails.css';
-
+import { useDarkMode } from '../context/DarkModeContext';
 const CartDetails = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -16,7 +16,7 @@ const CartDetails = () => {
     const [deletingItems, setDeletingItems] = useState(new Set());
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const { darkMode } = useDarkMode();
     // Function to fetch cart items
     const fetchCartItems = async (productIds) => {
         console.log('Fetching items for productIds:', productIds);
@@ -219,13 +219,13 @@ const CartDetails = () => {
    return (
         <div className="cart-container">
             <div className="cart-content">
-                <div className="cart-items-section">
+                <div className="cart-items-section" style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
                     {/* Display ALL addresses */}
                     {address.length > 0 && (
-                        <div className="addresses-section">
+                        <div className="addresses-section" >
                             <h3>Delivery Addresses</h3>
                             {address.map((singleAddress, index) => (
-                                <div key={singleAddress._id || index} className="delivery-address">
+                                <div key={singleAddress._id || index} className="delivery-address" style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
                                     <LocationOnIcon className="address-icon" />
                                     <div className="address-details">
                                         <h4>Delivery to: {singleAddress.name}</h4>
@@ -284,7 +284,7 @@ const CartDetails = () => {
                 </div>
 
                 <div className="cart-summary">
-                    <div className="summary-card">
+                    <div className="summary-card" style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
                         <h3>Price Details</h3>
                         <div className="price-breakdown">
                             <div className="price-row">
@@ -314,9 +314,9 @@ const CartDetails = () => {
                         </button>
                     </div>
 
-                    <div className="address-card" onClick={handleAddress}>
+                    <div className="address-card" onClick={handleAddress} style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
                         <div className="address-content">
-                            <h3>{address.length > 0 ? 'Update Contact' : 'Add your Contact'}</h3>
+                            <h3 style={{color: darkMode ? 'white' : 'black'}}>{address.length > 0 ? 'Update Contact' : 'Add your Contact'}</h3>
                             <AddCircleOutlineIcon className="add-icon" />
                         </div>
                     </div>

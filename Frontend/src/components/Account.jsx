@@ -17,13 +17,14 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { useDarkMode } from '../context/DarkModeContext';
 export default function AccountMenu() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [currUser, setCurrUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const open = Boolean(anchorEl);
+    const { darkMode } = useDarkMode();
 
     // Check authentication status on component mount and after refreshes
     useEffect(() => {
@@ -199,6 +200,8 @@ export default function AccountMenu() {
                         sx: {
                             overflow: 'visible',
                             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
+                            color: darkMode ? 'white' : 'black',
                             mt: 1.5,
                             '& .MuiAvatar-root': {
                                 width: 32,
@@ -217,6 +220,7 @@ export default function AccountMenu() {
                                 bgcolor: 'background.paper',
                                 transform: 'translateY(-50%) rotate(45deg)',
                                 zIndex: 0,
+                                
                             },
                         },
                     },
@@ -234,19 +238,19 @@ export default function AccountMenu() {
                         </MenuItem>
                         <Divider />
                         <MenuItem onClick={addProduct}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <AddIcon fontSize="small" />
                             </ListItemIcon>
                             Add Product
                         </MenuItem>
                         <MenuItem onClick={handleSettings}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <Settings fontSize="small" />
                             </ListItemIcon>
                             Settings
                         </MenuItem>
                         <MenuItem onClick={handleLogOut}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <Logout fontSize="small" />
                             </ListItemIcon>
                             Logout
@@ -255,13 +259,13 @@ export default function AccountMenu() {
                 ) : (
                     <Box>
                         <MenuItem onClick={handleLogIn}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <LoginIcon fontSize="small" />
                             </ListItemIcon>
                             Login
                         </MenuItem>
                         <MenuItem onClick={handleSignUp}>
-                            <ListItemIcon>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <PersonAdd fontSize="small" />
                             </ListItemIcon>
                             Sign Up

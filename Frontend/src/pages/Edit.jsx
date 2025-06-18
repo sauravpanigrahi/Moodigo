@@ -3,8 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import categories from './category';
-
+import { useDarkMode } from '../context/DarkModeContext';
 const Edit = () => {
+  const { darkMode } = useDarkMode();
   const [product, setProduct] = useState({
     name: '',
     about: '',
@@ -97,7 +98,7 @@ const Edit = () => {
       boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2, 0.4), 0 1px 3px rgba(0, 0, 0, 0.8)",
       borderRadius: "8px",
       padding: "1rem",
-      backgroundColor: "white"
+      backgroundColor: darkMode ? '#1a1a1a' : 'white'
     }}>
       <h1>Edit Product</h1>
       <form onSubmit={handleSubmit}>

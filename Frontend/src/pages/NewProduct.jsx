@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import categories from './category';
-
+import { useDarkMode } from '../context/DarkModeContext';
 const Listing = () => {
+  const { darkMode } = useDarkMode();
   const [products, setProducts] = useState({
     name: '',
     about: '',
@@ -129,10 +130,10 @@ window.dispatchEvent(event);
   return (
     <>
       <div className="container offset-3 col-6 mt-3 mb-3" style={{
-        boxShadow: "0 4px 6px rgba(0, 0, 0.2, 0.4), 0 1px 3px rgba(0, 0, 0, 0.8)",
+        boxShadow: darkMode ? "0 4px 6px rgba(255, 255, 255, 0.2), 0 1px 3px rgba(255, 255, 255, 0.8)" : "0 4px 6px rgba(0, 0, 0.2, 0.4), 0 1px 3px rgba(0, 0, 0, 0.8)",
         borderRadius: "8px",
         padding: "1rem",
-        backgroundColor: "white"
+        backgroundColor: darkMode ? '#1a1a1a' : 'white'
       }}>
         <h1>New Product</h1>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
