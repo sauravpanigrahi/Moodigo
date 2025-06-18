@@ -66,10 +66,10 @@ let sessionOptions = {
 };
 
 // Add session middleware logging
-app.use((req, res, next) => {
-  console.log(`Session ID: ${req.sessionID}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(`Session ID: ${req.sessionID}`);
+//   next();
+// });
 
 
 const transporter = nodemailer.createTransport({
