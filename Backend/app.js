@@ -109,7 +109,7 @@ app.use(passport.session());
 app.use(cors({
   origin: function(origin, callback) {
     const allowedOrigins = [
-      // 'http://localhost:5173',
+      'http://localhost:5173',
       "https://moodigo-web-app.web.app"
     ];
     if (!origin && process.env.NODE_ENV === 'development') {

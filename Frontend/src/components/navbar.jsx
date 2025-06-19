@@ -22,24 +22,24 @@ const Navbar = ({ cartCount }) => {
   const handleclick = () => {
     navigate('/products');
   };
-  const handlesignup=()=>{
+  const handlesignup = () => {
     navigate('/Signup')
   }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-      <div className="container">
+      <div className="container-fluid">
 
         {/* Brand Logo */}
         <Link className="navbar-brand d-flex align-items-center" to="/">
-          <img
+          {/* <img
             src="/logo.png"
             alt="Logo"
             style={{ width: "auto", height: "40px", objectFit: "contain" }}
-            className="d-inline-block align-text-top"
-          />
+            className="d-inline-block align-text-top d-none d-lg-flex ms-5"
+          /> */}
           <span
-            className="ms-2 fw-bold fs-3"
+            className="ms-2 fw-bold fs-3  brand-name"
             style={{
               background: 'linear-gradient(45deg, #ff6b6b, #feca57)',
               WebkitBackgroundClip: 'text',
@@ -49,23 +49,31 @@ const Navbar = ({ cartCount }) => {
             Moodigo
           </span>
         </Link>
-
-        {/* Mobile Toggle Button */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavAltMarkup"
-          aria-controls="navbarNavAltMarkup"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
+        
+        {/* Right-side controls: Dark Mode + Navbar Toggler */}
+        <div className="d-flex align-items-center ms-auto gap-2 darkbutton">
+          <button
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => toggleDarkMode()}
+          >
+            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+        </div>
+        
         {/* Navbar Content */}
         <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-
+        
           {/* Search Bar - Center */}
           <div className="navbar-nav mx-auto d-none d-lg-block">
             <TextField
@@ -94,10 +102,10 @@ const Navbar = ({ cartCount }) => {
               }}
             />
           </div>
+          
 
           {/* Right Side Actions */}
-          <div className="navbar-nav ms-auto d-flex align-items-center gap-3">
-
+          <div className="navbar-nav ms-auto d-flex flex-wrap flex-row align-items-center gap-2 gap-md-3"> {/* ✅ UPDATED: allow wrapping on small screens */}
             {/* Account Menu */}
             <div className="nav-item">
               <AccountMenu />
@@ -132,7 +140,7 @@ const Navbar = ({ cartCount }) => {
               </IconButton>
             </div>
 
-            {/* Shop Now Button - Hidden on mobile */}
+            {/* Shop Now Button */}
             <div className="nav-item d-none d-lg-block">
               <button
                 className="btn btn-outline-primary px-3 py-2 rounded-pill"
@@ -157,17 +165,8 @@ const Navbar = ({ cartCount }) => {
               </button>
             </div>
 
-            {/* Sign Up & Dark Mode Button - Hidden on mobile */}
-            <div className="nav-item d-flex align-items-center gap-2">
-            {/* <div className="nav-item d-none d-lg-flex align-items-center gap-2"> */}
-              <button
-                className="btn btn-outline-secondary btn-sm"
-                onClick={() => toggleDarkMode()}
-              >
-                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </button>
-            </div>
-
+            {/* Dark Mode Button - Now visible on mobile too */}
+           
           </div>
         </div>
 
@@ -200,6 +199,7 @@ const Navbar = ({ cartCount }) => {
         .navbar {
           transition: all 0.3s ease-in-out;
         }
+        
 
         .navbar-brand:hover {
           transform: scale(1.05);
@@ -220,8 +220,7 @@ const Navbar = ({ cartCount }) => {
             padding-top: 1rem;
             border-top: 1px solid #dee2e6;
           }
-        }
-
+         
         body.dark-mode {
           background-color: #121212;
           color: #f1f1f1;

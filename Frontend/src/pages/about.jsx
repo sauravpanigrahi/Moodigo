@@ -76,34 +76,9 @@ const AboutUs = () => {
 
   return (
     <div className={isDarkMode ? 'aboutus dark-mode' : 'aboutus'}>
-      <div className="position-fixed top-0 end-0 p-3 d-flex flex-column align-items-end gap-3 z-3">
-        <div className="d-flex align-items-center bg-light rounded-pill shadow-sm p-2">
-          <Sun className="me-2" />
-          <div className="form-check form-switch">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              checked={isDarkMode}
-              onChange={() => setIsDarkMode(!isDarkMode)}
-              id="darkModeSwitch"
-            />
-          </div>
-          <Moon className="ms-2" />
-        </div>
-        <div className="d-flex gap-2">
-          {themes.map((t, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrentTheme(i)}
-              className="btn btn-sm rounded-circle border"
-              style={{ background: `linear-gradient(135deg, ${t.primary}, ${t.secondary})`, width: '30px', height: '30px' }}
-              title={t.name}
-            />
-          ))}
-        </div>
-      </div>
+      
 
-      <section className="container text-center py-5">
+      <section className="container-fluid text-center py-5">
         <h1 className="display-2 fw-bold" style={{ color: theme.primary }}>Moodigo</h1>
         <p className="lead">Where your mood meets style. Discover fashion and mobile accessories that reflect your unique personality.</p>
         <div className="row my-5 justify-content-center">
