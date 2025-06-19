@@ -158,9 +158,8 @@ const Navbar = ({ cartCount }) => {
             </div>
 
             {/* Sign Up & Dark Mode Button - Hidden on mobile */}
-            <div className="nav-item d-none d-lg-flex align-items-center gap-2">
-              
-              
+            <div className="nav-item d-flex align-items-center gap-2">
+            {/* <div className="nav-item d-none d-lg-flex align-items-center gap-2"> */}
               <button
                 className="btn btn-outline-secondary btn-sm"
                 onClick={() => toggleDarkMode()}
