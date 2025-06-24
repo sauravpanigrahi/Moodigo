@@ -159,6 +159,7 @@ const Navbar = ({ cartCount }) => {
               >
                 Shop Now
               </button>
+              
             </div>
 
             {/* Dark Mode Button - Now visible on mobile too */}
