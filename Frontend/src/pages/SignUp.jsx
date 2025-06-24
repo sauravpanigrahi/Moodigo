@@ -22,6 +22,11 @@ const SignUpPage = () => {
       withCredentials: true, // Include credentials for CORS requests
    })
    toast.success(response.data.message || 'Signup successful!');
+
+   // Dispatch a custom event to notify other components of login
+   const event = new CustomEvent('loginSuccess', { detail: { user: response.data.user } });
+   window.dispatchEvent(event);
+   
    navigate("/products")
    }catch(err){
     console.error('Error signing up', err);
