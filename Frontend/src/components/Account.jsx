@@ -6,7 +6,6 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
@@ -18,6 +17,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useDarkMode } from '../context/DarkModeContext';
+
 export default function AccountMenu() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -26,33 +26,30 @@ export default function AccountMenu() {
     const open = Boolean(anchorEl);
     const { darkMode } = useDarkMode();
 
-    // Check authentication status on component mount and after refreshes
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
                 const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
                     withCredentials: true,
-                    timeout: 5000 // Add timeout to prevent hanging requests
+                    timeout: 5000,
                 });
 
                 if (response.data.isAuthenticated) {
                     setCurrUser(response.data.user);
                     localStorage.setItem('user', JSON.stringify(response.data.user));
-                    console.log(currUser)
                 } else {
                     setCurrUser(null);
                     localStorage.removeItem('user');
                 }
             } catch (error) {
                 console.error('Authentication check failed:', error);
-                // Only clear user data if we get a 401 response
                 if (error.response && error.response.status === 401) {
                     setCurrUser(null);
                     localStorage.removeItem('user');
-                }
-                // Don't show error toast for network errors to prevent spam
-                if (!error.response || error.response.status !== 401) {
-                    console.log('Non-critical auth check error:', error.message);
+                } else if (error.code === 'ECONNABORTED') {
+                    console.warn('Auth request timed out');
+                } else {
+                    console.warn('Non-critical auth check error:', error.message);
                 }
             } finally {
                 setIsLoading(false);
@@ -60,14 +57,11 @@ export default function AccountMenu() {
         };
 
         checkAuthStatus();
-
-        // Check auth status every 5 seconds instead of 30
-        const intervalId = setInterval(checkAuthStatus, 5000);
+        const intervalId = setInterval(checkAuthStatus, 15000); // 15 seconds polling
 
         return () => clearInterval(intervalId);
     }, []);
 
-    // Listen for storage events (for when user logs in/out in another tab)
     useEffect(() => {
         const handleStorageChange = (e) => {
             if (e.key === 'user') {
@@ -88,7 +82,6 @@ export default function AccountMenu() {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
-    // Listen for custom login event
     useEffect(() => {
         const handleLoginSuccess = (e) => {
             if (e.detail && e.detail.user) {
@@ -99,7 +92,11 @@ export default function AccountMenu() {
         window.addEventListener('loginSuccess', handleLoginSuccess);
         return () => window.removeEventListener('loginSuccess', handleLoginSuccess);
     }, []);
-    
+
+    useEffect(() => {
+        console.log('Updated user:', currUser);
+    }, [currUser]);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -173,12 +170,61 @@ export default function AccountMenu() {
 
     return (
         <React.Fragment>
-           <MenuItem onClick={addProduct}>
-                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
-                                <AddIcon fontSize="small" />
-                            </ListItemIcon>
-                            Add Product 
-                        </MenuItem>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Tooltip title={currUser ? "Account settings" : "Login/Signup"}>
+                    <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? 'account-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                    >
+                        <Avatar sx={{ width: 32, height: 32 }}>
+                            {currUser ? currUser.email?.[0]?.toUpperCase() || 'U' : 'G'}
+                        </Avatar>
+                    </IconButton>
+                </Tooltip>
+            </Box>
+            <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
+                            color: darkMode ? 'white' : 'black',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                            },
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
                 {currUser ? (
                     <Box>
                         <MenuItem onClick={handleProfile}>
@@ -223,7 +269,7 @@ export default function AccountMenu() {
                         </MenuItem>
                     </Box>
                 )}
-           
+            </Menu>
         </React.Fragment>
     );
 }

@@ -246,17 +246,21 @@ app.get("/",(req,res)=>{
     res.send("Hello from the backend");
 })
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+
 
 app.get('/check-auth', (req, res) => {
   const token = req.cookies.token;
   if (!token) return res.status(200).json({ isAuthenticated: false });
-  jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, user) => {
+  jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, decoded) => {
     if (err) return res.status(200).json({ isAuthenticated: false });
-    res.status(200).json({ isAuthenticated: true, user });
+    res.status(200).json({
+      isAuthenticated: true,
+      user: {
+        _id: decoded._id,
+        username: decoded.username,
+        email: decoded.email
+      }
+    });
   });
 });
 
@@ -375,28 +379,9 @@ app.post('/review/:id', isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/check-auth", (req, res) => {
-  console.log("Checking auth status:", {
-    isAuthenticated: req.isAuthenticated(),
-    sessionID: req.sessionID,
-    user: req.user ? req.user._id : null
-  });
-  
-  if (req.isAuthenticated()) {
-    const { _id, Firstname, Lastname, phonenumber, email, username } = req.user;
-    res.status(200).json({ 
-      isAuthenticated: true, 
-      user: { _id, Firstname, Lastname, phonenumber, email, username } 
-    });
-  } else {
-    res.status(200).json({ isAuthenticated: false });
-  }
-});
 
-app.get("/", (req, res) => {
-  res.send("Hello from the backend");
-});
 
-app.listen( () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
