@@ -38,7 +38,6 @@ export default function AccountMenu() {
                 if (response.data.isAuthenticated) {
                     setCurrUser(response.data.user);
                     localStorage.setItem('user', JSON.stringify(response.data.user));
-                    console.log(currUser)
                 } else {
                     setCurrUser(null);
                     localStorage.removeItem('user');
@@ -173,12 +172,62 @@ export default function AccountMenu() {
 
     return (
         <React.Fragment>
-           <MenuItem onClick={addProduct}>
-                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
-                                <AddIcon fontSize="small" />
-                            </ListItemIcon>
-                            Add Product 
-                        </MenuItem>
+            <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                <Tooltip title={currUser ? "Account settings" : "Login/Signup"}>
+                    <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? 'account-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                    >
+                        <Avatar sx={{ width: 32, height: 32 }}>
+                            {currUser ? currUser.email?.[0]?.toUpperCase() || 'U' : 'G'}
+                        </Avatar>
+                    </IconButton>
+                </Tooltip>
+            </Box>
+            <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                slotProps={{
+                    paper: {
+                        elevation: 0,
+                        sx: {
+                            overflow: 'visible',
+                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                            backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa',
+                            color: darkMode ? 'white' : 'black',
+                            mt: 1.5,
+                            '& .MuiAvatar-root': {
+                                width: 32,
+                                height: 32,
+                                ml: -0.5,
+                                mr: 1,
+                            },
+                            '&::before': {
+                                content: '""',
+                                display: 'block',
+                                position: 'absolute',
+                                top: 0,
+                                right: 14,
+                                width: 10,
+                                height: 10,
+                                bgcolor: 'background.paper',
+                                transform: 'translateY(-50%) rotate(45deg)',
+                                zIndex: 0,
+                                
+                            },
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
                 {currUser ? (
                     <Box>
                         <MenuItem onClick={handleProfile}>
@@ -223,7 +272,7 @@ export default function AccountMenu() {
                         </MenuItem>
                     </Box>
                 )}
-           
+            </Menu>
         </React.Fragment>
     );
 }
