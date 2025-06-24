@@ -17,7 +17,6 @@ const Edit = () => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
     const checkAuth = async () => {

@@ -25,7 +25,7 @@ export default function Review() {
   useEffect(() => {
     checkAuth();
     fetchReviews();
-  }, [productId]);
+  }, [productId, fetchReviews]);
 
   const checkAuth = async () => {
     try {

@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button';
 import {  useNavigate } from 'react-router-dom'; 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDarkMode } from '../context/DarkModeContext';
 
 // Lucide React Icons

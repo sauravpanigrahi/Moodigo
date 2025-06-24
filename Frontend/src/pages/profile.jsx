@@ -2,7 +2,6 @@ import React from 'react';
 import './Profile.css';
 import Avatar from '@mui/material/Avatar';
 import { useAuth } from '../context/AuthContext';
-import { useDarkMode } from '../context/DarkModeContext';
 
 const ProfileSection = () => {
   const { user, loading } = useAuth();

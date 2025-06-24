@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Shirt, Crown, ChevronRight, Gift } from 'lucide-react';
 import { useDarkMode } from '../context/DarkModeContext';
 import { useNavigate } from 'react-router-dom';
+
 const FeaturedProduct = () => {
   const { darkMode } = useDarkMode();
- const navigate=useNavigate();
+  const navigate = useNavigate();
   const categories = [
     { name: "Women's Fashion", icon: <Shirt className="w-6 h-6 w-md-8 h-md-8" />, count: "2,500+ items",link: "/products/Fashion/Women" },
     { name: "Men's Fashion", icon: <Shirt className="w-6 h-6 w-md-8 h-md-8" />, count: "1,800+ items",link: "/products/Fashion/Men" },

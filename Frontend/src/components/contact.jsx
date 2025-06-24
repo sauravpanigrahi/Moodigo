@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const contact = () => {
+const Contact = () => {
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem('user'));
     const [formData, setFormData] = useState({
@@ -125,4 +125,4 @@ const contact = () => {
     );
 };
 
-export default contact;
+export default Contact;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from "@mui/material/InputAdornment";
@@ -13,7 +13,6 @@ import '../App.css';
 
 const Navbar = ({ cartCount }) => {
   const { darkMode, toggleDarkMode } = useDarkMode();
-  const user = JSON.parse(localStorage.getItem('user'));
   const navigate = useNavigate();
 
   const handleCart = () => {
@@ -22,9 +21,6 @@ const Navbar = ({ cartCount }) => {
   const handleclick = () => {
     navigate('/products');
   };
-  const handlesignup = () => {
-    navigate('/Signup')
-  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
@@ -195,7 +191,7 @@ const Navbar = ({ cartCount }) => {
       </div>
 
       {/* Custom Styles */}
-      <style jsx>{`
+      <style>{`
         .navbar {
           transition: all 0.3s ease-in-out;
         }

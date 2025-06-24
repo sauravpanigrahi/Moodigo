@@ -4,10 +4,6 @@ import './aboutus.css';
 import { Sparkles, Smartphone, Shirt, Users, Target, Zap, Heart, Star, Palette, Sun, Moon } from 'lucide-react';
 
 const AboutUs = () => {
-  const [scrollY, setScrollY] = useState(0);
-  const [currentTheme, setCurrentTheme] = useState(0);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
   const themes = [
     {
       name: "Warm Sunset",
@@ -41,13 +37,7 @@ const AboutUs = () => {
     }
   ];
 
-  const theme = themes[currentTheme];
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const theme = themes[0];
 
   const stats = [
     { number: '50K+', label: 'Happy Customers', icon: Users },
@@ -75,7 +65,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className={isDarkMode ? 'aboutus dark-mode' : 'aboutus'}>
+    <div className="aboutus">
       
 
       <section className="container-fluid text-center py-5">

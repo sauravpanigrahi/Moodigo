@@ -12,10 +12,6 @@ const cors = require('cors');
 
 const methodoverride = require("method-override");
 const Product = require("./model/product");
-const session = require("express-session");
-const MongoStore = require("connect-mongo");
-const passport = require("passport");
-const localStrategy = require("passport-local").Strategy;
 const User = require("./model/user");
 const Address = require('./model/Address');
 const multer = require('multer');
@@ -23,6 +19,9 @@ const { storage } = require('./cloudConfig');
 const Contact = require('./model/contact');
 const nodemailer = require('nodemailer');
 const Review = require('./model/review');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const { isLoggedIn } = require('./middleware');
 // Connect to MongoDB
 const dburl=process.env.DB_URL || "mongodb://localhost:27017/Ecommerce";
 async function main() {
@@ -35,42 +34,6 @@ async function main() {
   }
 }
 main();
-
-
-
-const store= MongoStore.create({
-  mongoUrl: dburl,
-  crypto:{
-    secret: process.env.SESSION_SECRET
-  },
-  touchAfter: 24 * 60 * 60, // 1 day
-});
-store.on("error", function(e){
-  console.error("Session store error", e);
-});
-// Session configuration
-let sessionOptions = {
-  store,
-  name: 'session',
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: true,
-  name: 'moodigo.sid',
-  cookie: {
-    httpOnly: true,
-    expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7
-
-
-  }
-};
-
-// Add session middleware logging
-// app.use((req, res, next) => {
-//   console.log(`Session ID: ${req.sessionID}`);
-//   next();
-// });
-
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -99,38 +62,20 @@ const upload = multer({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
+app.use(cookieParser());
 
 // CORS configuration
 
-
-app.use(session(sessionOptions));
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(cors({
-  origin: function(origin, callback) {
-    const allowedOrigins = [
-      // 'http://localhost:5173',
-      "https://moodigo-web-app.web.app"
-    ];
-    if (!origin && process.env.NODE_ENV === 'development') {
-      return callback(null, true);
-    }
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: [
+    'http://localhost:5173',
+    'https://moodigo-web-app.web.app'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   exposedHeaders: ['Set-Cookie', 'Cookie']
 }));
-
-
-passport.use(new localStrategy({ usernameField: "email" }, User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 app.get("/products", async (req, res) => {
   try {
@@ -195,7 +140,7 @@ app.delete("/products/:id/delete", async (req, res) => {
   }
 });
 
-app.post("/addproduct", upload.single("imageFile"), async (req, res) => {
+app.post("/addproduct", isLoggedIn, upload.single("imageFile"), async (req, res) => {
   try {
     console.log('--- New Product Request ---');
     console.log('Request Body:', req.body);
@@ -247,49 +192,43 @@ app.post("/signup", async (req, res) => {
   const { Firstname, Lastname, email, phonenumber, password } = req.body;
   try {
     const username = email.split("@")[0];
-    const newUser = new User({ Firstname, Lastname, email, phonenumber, username });
-    await User.register(newUser, password);
-    req.login(newUser, (err) => {
-      if (err) return res.status(500).json({ error: "Login after signup failed" });
-      res.status(200).json({ message: "Signup successful", user: { username, email, _id: newUser._id } });
-    });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+    const newUser = new User({ Firstname, Lastname, email, phonenumber, username, password });
+    await newUser.save();
+    // Generate JWT
+    const token = jwt.sign({ _id: newUser._id, email: newUser.email, username: newUser.username }, process.env.JWT_SECRET || 'SECRET_KEY', { expiresIn: '1d' });
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+    res.status(200).json({ message: "Signup successful", user: { username, email, _id: newUser._id } });
   } catch (err) {
     res.status(400).json({ error: "Signup failed", details: err.message });
   }
 });
 
-app.post("/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
-    if (!user) {
-      return res.status(401).json({ 
-        error: info.message || "Invalid credentials" 
-      });
-    }
-    req.logIn(user, (err) => {
-      if (err) return next(err);
-      // Explicitly save session before sending response
-      req.session.save(() => {
-        res.status(200).json({ 
-          message: "Login successful", 
-          user: { 
-            username: user.username, 
-            email: user.email, 
-            _id: user._id 
-          } 
-        });
-      });
-    });
-  })(req, res, next);
-});
-app.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) return res.status(500).json({ error: "Logout failed" });
-    res.status(200).json({ message: "Logout successful" });
-  });
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
+    // Generate JWT
+    const token = jwt.sign({ _id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET || 'SECRET_KEY', { expiresIn: '1d' });
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+    res.status(200).json({ message: "Login successful", user: { username: user.username, email: user.email, _id: user._id } });
+  } catch (err) {
+    res.status(500).json({ error: "Login failed", details: err.message });
+  }
 });
 
-app.post("/Address", async (req, res) => {
+app.post("/logout", (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: "Logout successful" });
+});
+
+app.post("/Address", isLoggedIn, async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Login required" });
   const { name, email, number, address, city, state, pincode } = req.body;
   const newAddress = new Address({ name, email, number, address, city, state, pincode, userId: req.user._id });
@@ -297,7 +236,7 @@ app.post("/Address", async (req, res) => {
   res.status(200).json({ message: "Address added" });
 });
 
-app.get("/Address", async (req, res) => {
+app.get("/Address", isLoggedIn, async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Login required" });
   const addresses = await Address.find({ userId: req.user._id });
   res.status(200).json(addresses);
@@ -313,27 +252,17 @@ app.listen(PORT, () => {
 });
 
 app.get('/check-auth', (req, res) => {
-  if (req.isAuthenticated()) {
-    // Return user details without sensitive information
-    const { _id, Firstname,Lastname,phonenumber, email } = req.user;
-    return res.status(200).json({ 
-      isAuthenticated: true, 
-      user: { _id, Firstname,Lastname,phonenumber,  email } 
-    });
-  } else {
-    // Clear any client-side cookies if not authenticated server-side
-    if (req.cookies) {
-      Object.keys(req.cookies).forEach(cookie => {
-        res.clearCookie(cookie);
-      });
-    }
-    return res.status(200).json({ isAuthenticated: false });
-  }
+  const token = req.cookies.token;
+  if (!token) return res.status(200).json({ isAuthenticated: false });
+  jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, user) => {
+    if (err) return res.status(200).json({ isAuthenticated: false });
+    res.status(200).json({ isAuthenticated: true, user });
+  });
 });
 
 // Address deletion endpoint
 
-app.delete("/Address/delete/:id", async (req, res) => {
+app.delete("/Address/delete/:id", isLoggedIn, async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ error: "Login required" });
     const address = await Address.findById(req.params.id);
@@ -412,7 +341,7 @@ app.get('/review/:id', async (req, res) => {
   }
 });
 
-app.post('/review/:id', async (req, res) => {
+app.post('/review/:id', isLoggedIn, async (req, res) => {
   try {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ error: 'You must be logged in to submit a review' });

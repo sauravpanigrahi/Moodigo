@@ -11,7 +11,6 @@ import './CartDetails.css';
 import { useDarkMode } from '../context/DarkModeContext';
 const CartDetails = () => {
     const [cartItems, setCartItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
     const [address, setAddress] = useState(null);
     const [deletingItems, setDeletingItems] = useState(new Set());
     const navigate = useNavigate();
@@ -126,14 +125,6 @@ const CartDetails = () => {
             window.removeEventListener('cartUpdated', handleCartUpdate);
         };
     }, []);
-
-    // Update total price when cart items change
-    useEffect(() => {
-        console.log('Cart items changed:', cartItems);
-        const total = cartItems.reduce((sum, item) => sum + item.price, 0);
-        console.log('Calculated total price:', total);
-        setTotalPrice(total);
-    }, [cartItems]);
 
     const handleDelete = async (id) => {
         try {

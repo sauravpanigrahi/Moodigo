@@ -1,8 +1,13 @@
-export function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return res.status(200).json({ message: "User is logged in" });
-        
-    } else {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+const jwt = require('jsonwebtoken');
+
+function isLoggedIn(req, res, next) {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+    jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, user) => {
+        if (err) return res.status(403).json({ message: 'Forbidden' });
+        req.user = user;
+        next();
+    });
 }
+
+module.exports = { isLoggedIn };
