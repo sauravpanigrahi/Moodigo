@@ -173,7 +173,12 @@ export default function AccountMenu() {
 
     return (
         <React.Fragment>
-            
+            <MenuItem onClick={handleSignUp}>
+                            <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
+                                <PersonAdd fontSize="small" />
+                            </ListItemIcon>
+                            Sign Up
+                        </MenuItem>
                 {currUser ? (
                     <Box>
                         <MenuItem onClick={handleProfile}>
