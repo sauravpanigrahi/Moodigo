@@ -173,11 +173,11 @@ export default function AccountMenu() {
 
     return (
         <React.Fragment>
-            <MenuItem onClick={handleSignUp}>
+           <MenuItem onClick={addProduct}>
                             <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
-                                <PersonAdd fontSize="small" />
+                                <AddIcon fontSize="small" />
                             </ListItemIcon>
-                            Sign Up
+                            Add Product
                         </MenuItem>
                 {currUser ? (
                     <Box>
