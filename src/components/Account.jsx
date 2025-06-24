@@ -177,7 +177,7 @@ export default function AccountMenu() {
                             <ListItemIcon sx={{ color: darkMode ? 'white' : 'inherit' }}>
                                 <AddIcon fontSize="small" />
                             </ListItemIcon>
-                            Add Product
+                            Add Product 
                         </MenuItem>
                 {currUser ? (
                     <Box>
