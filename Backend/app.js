@@ -21,8 +21,7 @@ const nodemailer = require('nodemailer');
 const Review = require('./model/review');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-const { isLoggedIn } = require('./middleware');
-// Connect to MongoDB
+const { isLoggedIn, checkAuthStatus } = require('./middleware');// Connect to MongoDB
 const dburl=process.env.DB_URL || "mongodb://localhost:27017/Ecommerce";
 async function main() {
   try {
@@ -76,6 +75,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   exposedHeaders: ['Set-Cookie', 'Cookie']
 }));
+app.use(checkAuthStatus);
+app.get('/check-auth', (req, res) => {
+  res.status(200).json({
+    isAuthenticated: req.user ? true : false,
+    user: req.user || null
+  });
+});
 
 app.get("/products", async (req, res) => {
   try {
@@ -99,9 +105,11 @@ app.get("/products/:id/edit", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ error: "Product not found" });
+    
     if (!req.user || product.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "No permission" });
     }
+    
     res.json(product);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch product" });
@@ -112,9 +120,11 @@ app.put("/products/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ error: "Product not found" });
+    
     if (!req.user || product.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "No permission" });
     }
+    
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
@@ -130,9 +140,11 @@ app.delete("/products/:id/delete", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ error: "Not found" });
+    
     if (!req.user || product.owner.toString() !== req.user._id.toString()) {
       return res.status(403).json({ error: "No permission" });
     }
+    
     await Product.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Deleted successfully" });
   } catch (err) {
@@ -224,7 +236,11 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
   res.status(200).json({ message: "Logout successful" });
 });
 
@@ -248,21 +264,21 @@ app.get("/",(req,res)=>{
 
 
 
-app.get('/check-auth', (req, res) => {
-  const token = req.cookies.token;
-  if (!token) return res.status(200).json({ isAuthenticated: false });
-  jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, decoded) => {
-    if (err) return res.status(200).json({ isAuthenticated: false });
-    res.status(200).json({
-      isAuthenticated: true,
-      user: {
-        _id: decoded._id,
-        username: decoded.username,
-        email: decoded.email
-      }
-    });
-  });
-});
+// app.get('/check-auth', (req, res) => {
+//   const token = req.cookies.token;
+//   if (!token) return res.status(200).json({ isAuthenticated: false });
+//   jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, decoded) => {
+//     if (err) return res.status(200).json({ isAuthenticated: false });
+//     res.status(200).json({
+//       isAuthenticated: true,
+//       user: {
+//         _id: decoded._id,
+//         username: decoded.username,
+//         email: decoded.email
+//       }
+//     });
+//   });
+// });
 
 // Address deletion endpoint
 
@@ -347,10 +363,6 @@ app.get('/review/:id', async (req, res) => {
 
 app.post('/review/:id', isLoggedIn, async (req, res) => {
   try {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: 'You must be logged in to submit a review' });
-    }
-
     const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
@@ -378,6 +390,7 @@ app.post('/review/:id', isLoggedIn, async (req, res) => {
     res.status(500).json({ error: 'Failed to submit review' });
   }
 });
+
 
 
 
