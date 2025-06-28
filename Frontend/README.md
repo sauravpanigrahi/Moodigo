@@ -1,10 +1,9 @@
 # 🛍️ E-Commerce Application – Frontend
 
 This is the **frontend** of a full-featured e-commerce platform, built using **React.js**. It provides a modern, responsive user interface that supports seamless browsing, shopping, authentication, and user account management. The frontend connects to a backend API and delivers a real-world shopping experience.
-
 ---
 
-## 🚀 Key Features (Explained)
+## 🚀 Key Features 
 
 ### ✅ User Authentication
 
@@ -29,7 +28,7 @@ Users can explore a rich catalog of products through:
 
 This feature enables a real-time cart experience:
 - **Add/Remove Products**: Each product card or detail page allows users to add items to their cart.
-- **Quantity Management**: Users can increase or decrease quantities of individual items directly within the cart view.
+<!-- - **Quantity Management**: Users can increase or decrease quantities of individual items directly within the cart view. -->
 - **Live Total Calculation**: The cart dynamically calculates and displays the total amount and total number of items.
 - **Cart Persistence**: Cart data remains even after page refreshes (stored in local state or local storage depending on implementation).
 
@@ -44,12 +43,12 @@ After logging in, users gain access to a personalized dashboard:
 
 ---
 
-### 📊 Seller Dashboard *(Optional / Future Scope)*
+<!-- ### 📊 Seller Dashboard *(Optional / Future Scope)*
 
 This is a specialized view for users with seller/admin privileges:
 - **Product Management**: Sellers can add, edit, or delete their product listings.
 - **Order Management**: Sellers can track orders, update delivery status, and manage customer queries.
-- **Analytics**: Basic sales data visualization (e.g., total revenue, best-selling products, stock alerts).
+- **Analytics**: Basic sales data visualization (e.g., total revenue, best-selling products, stock alerts). -->
 
 ---
 
@@ -74,20 +73,8 @@ Frontend/
 │ └── App.jsx # Root component with route definitions
 ├── public/ # Static assets (favicon, index.html, etc.)
 └── package.json # Project metadata and dependencies
-
-yaml
-Copy
-Edit
-
 ---
 
-## 🧭 Navigation Flow
-
-- `/` → Home page (product listings)
-- `/login` & `/register` → Auth pages
-- `/product/:id` → Individual product detail page
-- `/cart` → Shopping cart page
-- `/dashboard/user` → User profile and orders
 
 ---
 
@@ -104,41 +91,36 @@ Ensure the following tools are installed on your system:
 
 ### 🔧 Installation & Setup
 
-Follow these steps to run the frontend locally:
+Follow the steps below to set up and run the frontend locally:
 
 1. **Clone the repository**
+
 ```bash
 git clone <repository-url>
-Navigate to the frontend directory
-
-bash
-Copy
-Edit
+```
+### Navigate to the frontend directory
+```bash
 cd Frontend
-Install the project dependencies
+```
+### Install the project dependencies
+```bash
 
-bash
-Copy
-Edit
 npm install
 # or
 yarn install
-Start the development server
-
-bash
-Copy
-Edit
+```
+### Start the development server
+```bash
 npm run dev
 # or
 yarn dev
-After starting, the frontend will be running at:
-
-arduino
-Copy
-Edit
+```
+### After starting, the frontend will be running at:
+```bash
 http://localhost:5173
+```
 
-🎯 Project Goals
+### 🎯 Project Goals
 ✅ Deliver a modern and intuitive shopping experience
 
 📱 Ensure responsive design across all screen sizes
@@ -147,7 +129,7 @@ http://localhost:5173
 
 🔗 Seamlessly integrate with backend RESTful APIs
 
-📬 Contact
+### 📬 Contact
 Saurav Panigrahi
-✉️ your.email@example.com
-🔗 GitHub: https://github.com/yourusername/e-commerce
+✉️ sauravpanigrahi2004@gmail.com
+🔗 GitHub: https://github.com/sauravpanigrahi/Moodigo.git
