@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import './Product.css'; // Import your CSS file for styling
 import categories from "./category";
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -17,7 +17,7 @@ const Product = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('https://moodigo-96i1.onrender.com/products', {
+      const response = await axiosInstance.get('/products', {
         withCredentials: true,
       });
       setProducts(response.data);

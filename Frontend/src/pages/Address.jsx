@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import axios from "axios";
+import axiosInstance from '../config/axioss';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 const Address=()=>{
@@ -17,7 +17,7 @@ const Address=()=>{
     const handleSubmit = async (e) => {
       e.preventDefault();
       try{
-        const response=await axios.post("https://moodigo-96i1.onrender.com/Address", address, {
+        const response=await axiosInstance.post("/Address", address, {
           withCredentials: true
         });
         setAddress(response.data);

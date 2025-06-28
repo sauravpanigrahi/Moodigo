@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 import categories from './category';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -65,7 +65,7 @@ const Listing = () => {
     }
 
     // Update the handleSubmit function to properly handle the response
-const response = await axios.post('https://moodigo-96i1.onrender.com/addproduct', formData, {
+const response = await axiosInstance.post('/addproduct', formData, {
   headers: {
     'Content-Type': 'multipart/form-data',
   },

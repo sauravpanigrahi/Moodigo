@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 import categories from './category';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -21,7 +21,7 @@ const Edit = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
+        const response = await axiosInstance.get('/check-auth', {
           withCredentials: true
         });
         
@@ -32,7 +32,7 @@ const Edit = () => {
         }
         
         // Verify if the user is the owner of the product
-        const productResponse = await axios.get(`https://moodigo-96i1.onrender.com/products/${id}/edit`, {
+        const productResponse = await axiosInstance.get(`/products/${id}/edit`, {
           withCredentials: true
         });
         
@@ -76,7 +76,7 @@ const Edit = () => {
         category: `${product.category} > ${product.subcategory}`
       };
 
-      await axios.put(`https://moodigo-96i1.onrender.com/products/${id}`, productData, {
+      await axiosInstance.put(`/products/${id}`, productData, {
         withCredentials: true
       });
       

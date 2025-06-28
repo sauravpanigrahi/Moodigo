@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 
 const Contact = () => {
@@ -32,7 +32,7 @@ const Contact = () => {
                     ...formData,
                 };
 
-                await axios.post('https://moodigo-96i1.onrender.com/contact', contactData, {
+                await axiosInstance.post('/contact', contactData, {
                     withCredentials: true
                 });
                 

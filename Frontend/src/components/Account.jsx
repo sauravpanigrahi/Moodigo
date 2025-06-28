@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
@@ -14,10 +15,9 @@ import LoginIcon from '@mui/icons-material/Login';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 import { useDarkMode } from '../context/DarkModeContext';
-
 export default function AccountMenu() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -26,12 +26,13 @@ export default function AccountMenu() {
     const open = Boolean(anchorEl);
     const { darkMode } = useDarkMode();
 
+    // Check authentication status on component mount and after refreshes
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
+                const response = await axiosInstance.get('/check-auth', {
                     withCredentials: true,
-                    timeout: 5000,
+                    timeout: 5000 // Add timeout to prevent hanging requests
                 });
 
                 if (response.data.isAuthenticated) {
@@ -43,13 +44,14 @@ export default function AccountMenu() {
                 }
             } catch (error) {
                 console.error('Authentication check failed:', error);
+                // Only clear user data if we get a 401 response
                 if (error.response && error.response.status === 401) {
                     setCurrUser(null);
                     localStorage.removeItem('user');
-                } else if (error.code === 'ECONNABORTED') {
-                    console.warn('Auth request timed out');
-                } else {
-                    console.warn('Non-critical auth check error:', error.message);
+                }
+                // Don't show error toast for network errors to prevent spam
+                if (!error.response || error.response.status !== 401) {
+                    console.log('Non-critical auth check error:', error.message);
                 }
             } finally {
                 setIsLoading(false);
@@ -57,11 +59,14 @@ export default function AccountMenu() {
         };
 
         checkAuthStatus();
-        const intervalId = setInterval(checkAuthStatus, 15000); // 15 seconds polling
+
+        // Check auth status every 5 seconds instead of 30
+        const intervalId = setInterval(checkAuthStatus, 5000);
 
         return () => clearInterval(intervalId);
     }, []);
 
+    // Listen for storage events (for when user logs in/out in another tab)
     useEffect(() => {
         const handleStorageChange = (e) => {
             if (e.key === 'user') {
@@ -82,6 +87,7 @@ export default function AccountMenu() {
         return () => window.removeEventListener('storage', handleStorageChange);
     }, []);
 
+    // Listen for custom login event
     useEffect(() => {
         const handleLoginSuccess = (e) => {
             if (e.detail && e.detail.user) {
@@ -92,11 +98,7 @@ export default function AccountMenu() {
         window.addEventListener('loginSuccess', handleLoginSuccess);
         return () => window.removeEventListener('loginSuccess', handleLoginSuccess);
     }, []);
-
-    useEffect(() => {
-        console.log('Updated user:', currUser);
-    }, [currUser]);
-
+    
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -218,6 +220,7 @@ export default function AccountMenu() {
                                 bgcolor: 'background.paper',
                                 transform: 'translateY(-50%) rotate(45deg)',
                                 zIndex: 0,
+                                
                             },
                         },
                     },

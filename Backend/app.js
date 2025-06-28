@@ -1,15 +1,10 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-
 const cors = require('cors');
-
-// const port = process.env.PORT || 3000;
-
 const methodoverride = require("method-override");
 const Product = require("./model/product");
 const User = require("./model/user");
@@ -72,7 +67,7 @@ app.use(cors({
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
   exposedHeaders: ['Set-Cookie', 'Cookie']
 }));
 app.use(checkAuthStatus);
@@ -212,7 +207,12 @@ app.post("/signup", async (req, res) => {
     await newUser.save();
     // Generate JWT
     const token = jwt.sign({ _id: newUser._id, email: newUser.email, username: newUser.username }, process.env.JWT_SECRET || 'SECRET_KEY', { expiresIn: '1d' });
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: true, // Set to false for development
+      sameSite: 'none', 
+      maxAge: 24 * 60 * 60 * 1000 * 7
+    });
     res.status(200).json({ message: "Signup successful", user: { username, email, _id: newUser._id } });
   } catch (err) {
     res.status(400).json({ error: "Signup failed", details: err.message });
@@ -228,7 +228,12 @@ app.post("/login", async (req, res) => {
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
     // Generate JWT
     const token = jwt.sign({ _id: user._id, email: user.email, username: user.username }, process.env.JWT_SECRET || 'SECRET_KEY', { expiresIn: '1d' });
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: true, // Set to false for development
+      sameSite: 'none', 
+      maxAge: 24 * 60 * 60 * 1000 * 7
+    });
     res.status(200).json({ message: "Login successful", user: { username: user.username, email: user.email, _id: user._id } });
   } catch (err) {
     res.status(500).json({ error: "Login failed", details: err.message });
@@ -238,8 +243,8 @@ app.post("/login", async (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    secure: true, // Set to false for development
+    sameSite: 'none', 
   });
   res.status(200).json({ message: "Logout successful" });
 });
@@ -261,24 +266,6 @@ app.get("/Address", isLoggedIn, async (req, res) => {
 app.get("/",(req,res)=>{
     res.send("Hello from the backend");
 })
-
-
-
-// app.get('/check-auth', (req, res) => {
-//   const token = req.cookies.token;
-//   if (!token) return res.status(200).json({ isAuthenticated: false });
-//   jwt.verify(token, process.env.JWT_SECRET || 'SECRET_KEY', (err, decoded) => {
-//     if (err) return res.status(200).json({ isAuthenticated: false });
-//     res.status(200).json({
-//       isAuthenticated: true,
-//       user: {
-//         _id: decoded._id,
-//         username: decoded.username,
-//         email: decoded.email
-//       }
-//     });
-//   });
-// });
 
 // Address deletion endpoint
 

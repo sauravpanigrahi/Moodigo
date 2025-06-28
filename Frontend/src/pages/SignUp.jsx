@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify'; // Import toast function
 import { useDarkMode } from '../context/DarkModeContext';
@@ -16,16 +16,19 @@ const SignUpPage = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
    try{
-    const  response=await axios.post('https://moodigo-96i1.onrender.com/signup',
-       {Firstname,Lastname, email,phonenumber, password},{
+    const  response=await axiosInstance.post('/signup',
+       {Firstname,Lastname, email,phonenumber, password});
 
-      withCredentials: true, // Include credentials for CORS requests
-   })
-   toast.success(response.data.message || 'Signup successful!');
-   navigate("/products")
+    toast.success(response.data.message || 'Signup successful!');
+
+    // Dispatch a custom event to notify other components of login
+    const event = new CustomEvent('loginSuccess', { detail: { user: response.data.user } });
+    window.dispatchEvent(event);
+    
+    navigate("/products")
    }catch(err){
     console.error('Error signing up', err);
-    toast.error(err.response.data.error || 'Signup failed. Try again.');
+    toast.error(err.response?.data?.error || 'Signup failed. Try again.');
     setMessage('Signup failed. Try again.');
    }
   };

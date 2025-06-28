@@ -46,8 +46,13 @@ const Navbar = ({ cartCount }) => {
           </span>
         </Link>
         
-        {/* Right-side controls: Dark Mode + Navbar Toggler */}
+        {/* Right-side controls: Dark Mode + Navbar Toggler + Account Menu */}
         <div className="d-flex align-items-center ms-auto gap-2 darkbutton">
+          {/* Account Menu - Always visible */}
+          <div className="nav-item">
+            <AccountMenu />
+          </div>
+          
           <button
             className="btn btn-outline-secondary btn-sm"
             onClick={() => toggleDarkMode()}
@@ -102,11 +107,6 @@ const Navbar = ({ cartCount }) => {
 
           {/* Right Side Actions */}
           <div className="navbar-nav ms-auto d-flex flex-wrap flex-row align-items-center gap-2 gap-md-3"> {/* ✅ UPDATED: allow wrapping on small screens */}
-            {/* Account Menu */}
-            <div className="nav-item">
-              <AccountMenu />
-            </div>
-
             {/* Shopping Cart */}
             <div className="nav-item">
               <IconButton
@@ -159,7 +159,6 @@ const Navbar = ({ cartCount }) => {
               >
                 Shop Now
               </button>
-              
             </div>
 
             {/* Dark Mode Button - Now visible on mobile too */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -31,7 +31,7 @@ const CartDetails = () => {
                 productIds.map(async (id) => {
                     try {
                         console.log(`Fetching product ${id}...`);
-                        const res = await axios.get(`https://moodigo-96i1.onrender.com/products/${id}`, {
+                        const res = await axiosInstance.get(`/products/${id}`, {
                             withCredentials: true,
                         });
                         console.log(`Successfully fetched product ${id}:`, res.data);
@@ -61,7 +61,7 @@ const CartDetails = () => {
     // Function to fetch address
     // const fetchAddress = async () => {
     //     try {
-    //         const response = await axios.get('https://moodigo-96i1.onrender.com/Address', {
+    //         const response = await axios.get('http://localhost:5173/Address', {
     //             withCredentials: true
     //         });
     //         if (response.data && response.data.length > 0) {
@@ -75,7 +75,7 @@ const CartDetails = () => {
     // };
     const fetchAddress = async () => {
     try {
-        const response = await axios.get('https://moodigo-96i1.onrender.com/Address', {
+        const response = await axiosInstance.get('/Address', {
             withCredentials: true
         });
         
@@ -181,7 +181,7 @@ const CartDetails = () => {
                 return;
             }
 
-            await axios.delete(`https://moodigo-96i1.onrender.com/Address/delete/${addressId}`, {
+            await axiosInstance.delete(`/Address/delete/${addressId}`, {
                 withCredentials: true
             });
             

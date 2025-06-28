@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import './Productdetails.css';
 import { toast } from 'react-toastify';
 import Review from "../components/review";
@@ -25,7 +25,7 @@ const ProductDetails = ({ setCartCount }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`https://moodigo-96i1.onrender.com/products/${id}`, {
+        const response = await axiosInstance.get(`/products/${id}`, {
           withCredentials: true,
         });
         setProduct(response.data);
@@ -75,7 +75,7 @@ const ProductDetails = ({ setCartCount }) => {
     if (!confirmed) return;
 
     try {
-      await axios.delete(`https://moodigo-96i1.onrender.com/products/${id}/delete`, {
+      await axiosInstance.delete(`/products/${id}/delete`, {
         withCredentials: true,
       });
 

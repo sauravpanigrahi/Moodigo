@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 
 const Logout = () => {
@@ -9,7 +9,7 @@ const Logout = () => {
     useEffect(() => {
         const handleLogOut = async () => {
             try {
-                const response = await axios.get('https://moodigo-96i1.onrender.com/logout', { 
+                const response = await axiosInstance.post('/logout', {
                     withCredentials: true 
                 });
                 

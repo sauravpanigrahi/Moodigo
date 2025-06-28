@@ -2,7 +2,7 @@ import React from "react";
 import './myaccount.css'
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { toast } from 'react-toastify';
 // Add these imports for the icons
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -28,7 +28,7 @@ const MyAccount = () => {
                 toast.error('No address to delete');
                 return;
                 }
-             await axios.delete(`https://moodigo-96i1.onrender.com/Address/delete/${addressId}`, {
+             await axiosInstance.delete(`/Address/delete/${addressId}`, {
                 withCredentials: true,
             });
            
@@ -46,7 +46,7 @@ const MyAccount = () => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
+                const response = await axiosInstance.get('/check-auth', {
                     withCredentials: true,
                 });
 
@@ -59,7 +59,7 @@ const MyAccount = () => {
                 }
 
                 // Fetch addresses
-                const storeaddress = await axios.get('https://moodigo-96i1.onrender.com/Address', {
+                const storeaddress = await axiosInstance.get('/Address', {
                     withCredentials: true,
                 });
                 

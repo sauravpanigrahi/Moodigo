@@ -2,9 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import axiosInstance from '../config/axioss';
 import { useParams, useNavigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -22,14 +22,9 @@ export default function Review() {
   const productId = useParams().id;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    checkAuth();
-    fetchReviews();
-  }, [productId, fetchReviews]);
-
   const checkAuth = async () => {
     try {
-      const response = await axios.get('https://moodigo-96i1.onrender.com/check-auth', {
+      const response = await axiosInstance.get('/check-auth', {
         withCredentials: true
       });
       setIsAuthenticated(response.data.isAuthenticated);
@@ -39,10 +34,10 @@ export default function Review() {
     }
   };
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`https://moodigo-96i1.onrender.com/review/${productId}`);
+      const response = await axiosInstance.get(`/review/${productId}`);
       setReviews(response.data);
     } catch (error) {
       if (error.response?.status === 404) {
@@ -54,7 +49,12 @@ export default function Review() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId]);
+
+  useEffect(() => {
+    checkAuth();
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,7 +79,7 @@ export default function Review() {
       const reviewData = {
         ...review,
       };
-      await axios.post(`https://moodigo-96i1.onrender.com/review/${productId}`, reviewData, {
+      await axiosInstance.post(`/review/${productId}`, reviewData, {
         withCredentials: true
       });
       toast.success('Review submitted successfully');
