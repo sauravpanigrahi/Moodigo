@@ -94,12 +94,19 @@ Edit
 ## 🛠️ Getting Started (Frontend Only)
 
 ### 📦 Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
 
-### 🔧 Installation
+Ensure the following tools are installed on your system:
 
-1. Clone the repository  
+- **Node.js** (v14 or higher)
+- **npm** or **yarn** (for managing packages)
+
+---
+
+### 🔧 Installation & Setup
+
+Follow these steps to run the frontend locally:
+
+1. **Clone the repository**
 ```bash
 git clone <repository-url>
 Navigate to the frontend directory
@@ -108,29 +115,37 @@ bash
 Copy
 Edit
 cd Frontend
-Install dependencies
+Install the project dependencies
 
 bash
 Copy
 Edit
 npm install
+# or
+yarn install
 Start the development server
 
 bash
 Copy
 Edit
 npm run dev
-The frontend will be running at:
+# or
+yarn dev
+After starting, the frontend will be running at:
+
+arduino
+Copy
+Edit
 http://localhost:5173
 
 🎯 Project Goals
-Deliver an intuitive and modern shopping experience
+✅ Deliver a modern and intuitive shopping experience
 
-Ensure responsive design for all screen sizes
+📱 Ensure responsive design across all screen sizes
 
-Maintain modular and scalable architecture
+🧱 Maintain clean, modular, and scalable frontend architecture
 
-Integrate seamlessly with backend APIs
+🔗 Seamlessly integrate with backend RESTful APIs
 
 📬 Contact
 Saurav Panigrahi
