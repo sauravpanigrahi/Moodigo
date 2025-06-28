@@ -26,6 +26,7 @@ This backend is designed with scalability and security in mind, using modern bes
 - **jsonwebtoken**: Handles the generation and verification of JWT tokens for user sessions.
 - **cors**: Middleware to enable cross-origin requests between the frontend and backend.
 
+---
 
 ## 📦 Key Features 
 
