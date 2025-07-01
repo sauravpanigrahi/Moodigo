@@ -44,15 +44,14 @@ const Product = () => {
   useEffect(() => {
     if (category && subcategory) {
       const filtered = products.filter(product => {
-        const [productCategory, productSubcategory] = product.category.split(' > ');
-        return productCategory === category && productSubcategory === subcategory;
+        return product.category === category && product.subcategory === subcategory;
       });
       setFilteredProducts(filtered);
     } else {
       setFilteredProducts(products);
     }
   }, [products, category, subcategory]);
-
+  
 
 const handleheartClick = (e) => {
   const icon = e.currentTarget.firstChild;
@@ -65,7 +64,7 @@ const handleheartClick = (e) => {
         <p className="error-message">{error}</p>
       ) : (
         <>
-          <div className="label-container mt-2" style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
+          <div className="label-container mt-2 " style={{backgroundColor: darkMode ? '#1a1a1a' : '#f8f9fa'}}>
             <div className="category-menu " style={{color: darkMode ? 'white' : 'black'}}>
               {Object.entries(categories).map(([category, subcategories]) => (
                 <div key={category} className="menu-item">
@@ -98,7 +97,7 @@ const handleheartClick = (e) => {
               ))}
             </div>
           </div>
-          <div className="product">
+          <div className="product mb-4">
             {filteredProducts.length > 0 ? (
              filteredProducts.map((product) => (
                 <div key={product._id} className="card">
@@ -128,14 +127,16 @@ const handleheartClick = (e) => {
                     {/* <p className="card-title">{product.category}</p>
                     <p className="card-title ">{product.subcategory}</p> */}
                     <h5 className="card-title">
-                      {product.name.length > 60 ? `${product.name.slice(0, 60)}...` : product.name}
+                      {product.name.length > 60 ? `${product.name.slice(0, 46)}...` : product.name}
                     </h5>
                     <p className="card-text">
-                      {product.about.length > 60 ? `${product.about.slice(0, 60)}...` : product.about}
+                      {product.about.length > 60 ? `${product.about.slice(0, 120)}...` : product.about}
                     </p>
                     <div className="d-flex flex-column">
-                      <p className="card-text fw-bold mb-0">₹{product.price}</p>
-                      <p className="card-text fw-bold text-success mb-0">Bank Offer</p>
+                      <p className="card-text fw-bold mb-0">₹{Number(product.price).toLocaleString("en-IN")}</p>
+                      <p className="card-text fw-bold text-success mb-0">
+                        {product.price>=100000?"Bank Offer": null}
+                        </p>
                     </div>
                   </div>
                 </div>

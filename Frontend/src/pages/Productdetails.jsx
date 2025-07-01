@@ -99,7 +99,7 @@ const ProductDetails = ({ setCartCount }) => {
     <div>
     <div className="product-details-container">
       <div className="details">
-        <div className="image">
+        <div className="image" >
           {/* <img src={product.image} alt={product.name || 'Product Image'} className="card-img-top" /> */}
           <img src={
                             product.image && 
@@ -116,14 +116,16 @@ const ProductDetails = ({ setCartCount }) => {
                         />
         </div>
         <div className="card-body ">
-          <h4 className="card-title " style={{marginLeft:30,fontSize: 30 }}>{product.name}</h4>
-          <p className="card-title p">{product.about}</p>
-          <p className="card-title p" style={{ fontSize: 30 }}>Price: ₹{product.price}</p>
+          <h4 className="card-title " style={{marginLeft:30,fontSize: 20 }}>{product.name}</h4>
+          <hr></hr>
+          <p className="card-title p" style={{fontSize:18}}>{product.about}</p>
+          <p className="card-title p" style={{ fontSize: 25 }}>Price: ₹{Number(product.price).toLocaleString("en-IN")}</p>
 
           <div className="card-title p" style={{ lineHeight: 2 }}>
             <h5>Available offers</h5>
             <ul>
-              <li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit Card</li>
+              {product.price>100000?<li>Bank Offer: 5% Unlimited Cashback on Flipkart Axis Bank Credit Card</li>:null}
+              
               <li>Special Price: Get extra 18% off</li>
               <li>Combo Offer: Buy 2 items save ₹40; Buy 3+ save ₹80</li>
               <li>EMI starting from ₹369/month</li>

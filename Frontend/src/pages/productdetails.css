@@ -15,10 +15,11 @@
 
 .image {
   width: 100%;
-  max-width: 40rem;
-  height: auto;
+  max-width: 35rem;
+  height: 30rem;
   min-height: 20rem;
   flex: 1;
+  margin-top: 3rem;
 }
 
 .image img {
@@ -32,17 +33,17 @@
   flex: 1;
   min-width: 300px;
   max-width: 45rem;
-  padding: 1rem;
+  padding: 0.75rem;
 }
 
 .card-title {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .p {
   font-size: 1rem;
-  margin: 0.75rem 0;
-  line-height: 1.5;
+  margin:  0;
+  line-height: 1.35;
 }
 
 .card-img-top:hover {
@@ -60,7 +61,7 @@
   }
 
   .image {
-    max-width: 35rem;
+    max-width: 32rem;
   }
 
   .card-body {
@@ -83,7 +84,7 @@
 
   .image {
     max-width: 100%;
-    min-height: 15rem;
+    min-height: 12rem;
   }
 
   .card-body {
@@ -121,7 +122,7 @@
 /* Small mobile styles */
 @media (max-width: 480px) {
   .image {
-    min-height: 12rem;
+    min-height: 9rem;
   }
 
   .card-title {
