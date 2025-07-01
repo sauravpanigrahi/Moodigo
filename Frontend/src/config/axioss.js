@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const API_BASE_URL = 'https://moodigo-96i1.onrender.com';
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'https://moodigo-96i1.onrender.com';
+// const API_BASE_URL = 'http://localhost:3000';
 
 
 const axiosInstance = axios.create({
