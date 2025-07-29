@@ -128,12 +128,15 @@ const ProductDetails = ({ setCartCount }) => {
               
               <li>Special Price: Get extra 18% off</li>
               <li>Combo Offer: Buy 2 items save ₹40; Buy 3+ save ₹80</li>
-              <li>EMI starting from ₹369/month</li>
+              {product.price>2000?<li>Bank Offer: 10% off on ICICI Bank Credit Card EMI transactions, up to ₹1500. On orders of ₹3000 and above</li>:null}
+              {product.price>3000?<li>EMI starting from ₹369/month</li>:null}
+              {product.price<2000?<li>Bank Offer: 5% off on Flipkart Axis Bank Credit Card EMI transactions, up to ₹1500. On orders of ₹3000 and above</li>:null}
+              {product.price<500?<li>Bank Offer: 5% off on Flipkart Axis Bank Credit Card EMI transactions, up to ₹100. On orders of ₹500 and above</li>:null}
             </ul>
           </div>
 
-          <p className="card-title p">Category: {product.category}</p>
-          <p className="card-title p">Subcategory: {product.subcategory}</p>
+          {/* <p className="card-title p">Category: {product.category}</p>
+          <p className="card-title p">Subcategory: {product.subcategory}</p> */}
           <p className="card-title p">Seller: {product.owner?.email?.match(/^[^\d]+/)?.[0] || 'Unknown'}</p>
 
           {isOwner && (

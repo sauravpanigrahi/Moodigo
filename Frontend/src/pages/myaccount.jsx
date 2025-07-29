@@ -174,8 +174,21 @@ const MyAccount = () => {
               <div className="profile-detail ms-5 mt-4">
                 <h4>Personal Information</h4>
                     <div className= " mt-4 " style={{display:'flex',gap:'5rem',marginBottom:'20px',width:"100%",color: darkMode ? 'white' : 'black'}}>
-                  <TextField id="outlined-basic" label="First Name" variant="outlined" value={currUser.Firstname} style={{width:"32%"}}  disabled />
-                    <TextField id="outlined-basic" label="Last Name "  value={currUser.Lastname}variant="outlined"  disabled />
+                  <TextField
+                        id="outlined-basic"
+                        label="First Name"
+                        variant="outlined"
+                        value={currUser?.Firstname || ""}
+                        style={{ width: "32%" }}
+                        disabled
+                        />
+                           <TextField
+                                id="outlined-basic"
+                                label="Last Name"
+                                variant="outlined"
+                                value={currUser?.Lastname || ""}
+                                disabled
+                                />
                           </div>
                 <h4>Email Address</h4>
                        <div className="mt-4"  style={{display:'flex',width:"100%",gap:'3rem',marginBottom:'20px',fontSize:'1.2rem',}} >

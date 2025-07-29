@@ -253,13 +253,13 @@ const CartDetails = () => {
                                     />
 
                             </div>
-                            <div className="item-details">
+                            <div className="item-details ms-3">
                                 <h3>{item.name}</h3>
                                 <p className="category">{item.category}</p>
                                 <p className="description">
                                     {item.about.length > 100 ? item.about.slice(0, 100) + "..." : item.about}
                                 </p>
-                                <p className="price">₹{item.price}</p>
+                                <p className="price">₹{Number(item.price).toLocaleString("en-IN")}</p>
                             </div>
                             <div className="item-actions">
                                 <button 
@@ -296,7 +296,7 @@ const CartDetails = () => {
                             </div>
                             <div className="price-row total">
                                 <span>Total Amount</span>
-                                <span>₹{calculateTotalPrice() + 50 + 20 + 5}</span>
+                                <span>₹{Number(calculateTotalPrice() + 50 + 20 + 5).toLocaleString("en-IN")}</span>
                             </div>
                         </div>
                         <button className="pay-now-btn">

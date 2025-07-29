@@ -205,7 +205,7 @@ window.dispatchEvent(event);
           )}
 
           <div className="form-group mb-3">
-            <label htmlFor="price" className="form-label">Price ($)</label>
+            <label htmlFor="price" className="form-label">Price (₹)</label>
             <input 
               type="number" 
               id="price" 
